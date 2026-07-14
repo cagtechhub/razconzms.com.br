@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-@import 'tailwindcss';
+/* source() aponta para app/ — necessário no monorepo Nuxt 4 (srcDir: app/) */
+@import 'tailwindcss' source('../../');
 @import './theme.css';
 
 @layer base {
@@ -44,5 +45,98 @@
 
   .section-lead {
     @apply mt-4 max-w-2xl text-base leading-relaxed text-text-muted;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-[var(--radius-md)] border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-brand-navy-900 transition hover:border-brand-navy-200 hover:bg-brand-navy-50;
+  }
+
+  /* Portal do cliente — padrões compartilhados */
+  .portal-stack {
+    @apply flex flex-col gap-6;
+  }
+
+  .portal-page-header {
+    @apply flex flex-col justify-between gap-4 sm:flex-row sm:items-end;
+  }
+
+  .portal-page-title {
+    @apply mt-2 text-2xl font-semibold tracking-tight text-brand-navy-900 sm:text-3xl;
+  }
+
+  .portal-page-desc {
+    @apply mt-2 max-w-2xl text-sm leading-relaxed text-text-muted;
+  }
+
+  .portal-panel {
+    @apply overflow-hidden rounded-[var(--radius-lg)] border border-border bg-surface;
+  }
+
+  .portal-panel-header {
+    @apply flex flex-col justify-between gap-4 border-b border-border p-5 sm:flex-row sm:items-center sm:p-6;
+  }
+
+  .portal-panel-title {
+    @apply mt-1 text-lg font-semibold text-brand-navy-900;
+  }
+
+  .portal-panel-body {
+    @apply p-5 sm:p-6;
+  }
+
+  .portal-panel-footer {
+    @apply border-t border-border px-5 py-4 sm:px-6;
+  }
+
+  .portal-card {
+    @apply rounded-[var(--radius-lg)] border border-border bg-surface p-5;
+  }
+
+  .portal-icon {
+    @apply grid size-9 shrink-0 place-items-center rounded-[var(--radius-md)] bg-brand-navy-50 text-brand-navy-900;
+  }
+
+  .portal-icon-sm {
+    @apply grid size-8 shrink-0 place-items-center rounded-[var(--radius-sm)] bg-brand-navy-50 text-brand-navy-900;
+  }
+
+  .portal-link {
+    @apply inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] text-sm font-semibold text-brand-navy-900 transition hover:text-brand-gold-700;
+  }
+
+  .portal-search {
+    @apply flex items-center gap-2 rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2 text-sm text-text-muted transition focus-within:border-brand-gold-400 focus-within:ring-2 focus-within:ring-brand-gold-400/40;
+  }
+
+  .portal-search input {
+    @apply w-28 bg-transparent text-sm text-brand-navy-900 outline-none placeholder:text-text-muted sm:w-40;
+  }
+
+  .portal-badge {
+    @apply inline-flex rounded-full px-2 py-1 text-[10px] font-semibold;
+  }
+
+  .portal-table {
+    @apply w-full min-w-[640px] text-left text-sm;
+  }
+
+  .portal-table thead {
+    @apply bg-brand-navy-50 text-xs uppercase tracking-wide text-text-muted;
+  }
+
+  .portal-table th {
+    @apply px-5 py-3 font-semibold sm:px-6;
+  }
+
+  .portal-table td {
+    @apply px-5 py-4 sm:px-6;
+  }
+
+  .portal-table tbody {
+    @apply divide-y divide-border;
+  }
+
+  .portal-table tbody tr {
+    @apply transition hover:bg-brand-navy-50/50;
   }
 }
