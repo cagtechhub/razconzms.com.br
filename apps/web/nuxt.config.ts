@@ -7,7 +7,10 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt', '@nuxt/eslint', 'nuxt-security', '@nuxt/image'],
   css: ['~/assets/css/main.css'],
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    server: {
+      allowedHosts: ['76cc-168-232-70-40.ngrok-free.app']
+    }
   },
   runtimeConfig: {
     public: {

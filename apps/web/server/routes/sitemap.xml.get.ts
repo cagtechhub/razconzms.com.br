@@ -35,6 +35,11 @@ export default defineEventHandler((event) => {
     <changefreq>weekly</changefreq>
     <priority>1</priority>
   </url>
+  <url>
+    <loc>${escapeXml(`${origin}/faq`)}</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 </urlset>
 `
 })

@@ -10,13 +10,39 @@ const contactEmail = computed(() => String(config.public.contactEmail || '').tri
       class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-gold-500 to-transparent"
     />
     <div class="container-page py-12">
-      <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
+      <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.7fr_0.7fr]">
         <div>
           <LayoutAppLogo variant="footer" />
           <p class="mt-4 max-w-sm text-sm text-white/70">
             Contabilidade para empresas que precisam de precisão, prazos e orientação
             fiscal clara.
           </p>
+        </div>
+
+        <div class="text-sm">
+          <p class="font-semibold text-brand-gold-400">Navegação</p>
+          <div class="mt-3 space-y-2">
+            <NuxtLink
+              to="/#servicos"
+              class="focus-ring block w-fit rounded-[var(--radius-sm)] text-white/70 hover:text-white"
+              >Soluções</NuxtLink
+            >
+            <NuxtLink
+              to="/#planos"
+              class="focus-ring block w-fit rounded-[var(--radius-sm)] text-white/70 hover:text-white"
+              >Planos</NuxtLink
+            >
+            <NuxtLink
+              to="/faq"
+              class="focus-ring block w-fit rounded-[var(--radius-sm)] text-white/70 hover:text-white"
+              >Perguntas frequentes</NuxtLink
+            >
+            <NuxtLink
+              to="/area-do-cliente"
+              class="focus-ring block w-fit rounded-[var(--radius-sm)] text-white/70 hover:text-white"
+              >Área do cliente</NuxtLink
+            >
+          </div>
         </div>
 
         <div class="text-sm">

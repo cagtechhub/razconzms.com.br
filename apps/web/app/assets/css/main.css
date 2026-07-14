@@ -33,4 +33,16 @@
   .btn-accent {
     @apply inline-flex items-center justify-center rounded-[var(--radius-md)] bg-brand-gold-500 px-5 py-2.5 text-sm font-semibold text-brand-navy-950 transition hover:bg-brand-gold-400;
   }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold-700;
+  }
+
+  .section-title {
+    @apply mt-3 text-3xl font-semibold tracking-tight text-brand-navy-900 sm:text-4xl;
+  }
+
+  .section-lead {
+    @apply mt-4 max-w-2xl text-base leading-relaxed text-text-muted;
+  }
 }
