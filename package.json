@@ -1,0 +1,33 @@
+{
+  "name": "razconms-monorepo",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n web,api -c cyan,green \"yarn workspace @razconms/web dev\" \"yarn workspace @razconms/backend dev\"",
+    "dev:web": "yarn workspace @razconms/web dev",
+    "dev:backend": "yarn workspace @razconms/backend dev",
+    "build": "yarn workspace @razconms/shared build && yarn workspace @razconms/backend build && yarn workspace @razconms/web build",
+    "generate": "yarn workspace @razconms/web generate",
+    "preview": "yarn workspace @razconms/web preview",
+    "lint": "yarn workspace @razconms/shared lint && yarn workspace @razconms/backend lint && yarn workspace @razconms/web lint",
+    "lint:fix": "yarn workspace @razconms/shared lint:fix && yarn workspace @razconms/backend lint:fix && yarn workspace @razconms/web lint:fix",
+    "format": "prettier . --check",
+    "format:write": "prettier . --write",
+    "test": "yarn workspace @razconms/shared test && yarn workspace @razconms/backend test",
+    "test:watch": "concurrently -n shared,api -c magenta,green \"yarn workspace @razconms/shared test:watch\" \"yarn workspace @razconms/backend test:watch\"",
+    "db:generate": "yarn workspace @razconms/backend db:generate",
+    "db:migrate": "yarn workspace @razconms/backend db:migrate",
+    "postinstall": "yarn workspace @razconms/web postinstall"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.6.0"
+  }
+}

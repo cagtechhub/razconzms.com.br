@@ -1,0 +1,27 @@
+# Dependências e artefatos locais
+node_modules
+apps/web/node_modules
+.nuxt
+.output
+.nitro
+.cache
+dist
+.data
+
+# Git e IDE
+.git
+.github
+.cursor
+.idea
+.fleet
+.vscode
+
+# Ambiente (use variáveis no compose ou --env-file)
+.env
+.env.*
+!.env.example
+
+# Testes e docs locais
+coverage
+*.log
+.DS_Store

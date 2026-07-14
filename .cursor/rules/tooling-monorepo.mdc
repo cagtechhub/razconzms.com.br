@@ -1,0 +1,42 @@
+---
+description: Convenções de Prettier, ESLint e Vitest no monorepo Razcon (e template para projetos futuros Up2tech)
+alwaysApply: true
+---
+
+# Tooling do monorepo
+
+## Formatação — Prettier
+
+- Config na raiz: `.prettierrc` (`semi: false`, `singleQuote: true`, `trailingComma: none`, `printWidth: 90`).
+- Ignore list: `.prettierignore`.
+- Comandos: `yarn format` (check) e `yarn format:write`.
+- Não introduzir Biome, dprint ou outro formatador sem decisão explícita do time.
+- Não desabilitar format-on-save no VS Code (`.vscode/settings.json`).
+
+## Lint — ESLint flat config
+
+- **Web**: `@nuxt/eslint` + `eslint-config-prettier` em `apps/web/eslint.config.mjs`.
+- **Backend / shared**: `typescript-eslint` + `eslint-config-prettier`.
+- Comandos: `yarn lint` e `yarn lint:fix`.
+- ESLint não formata — Prettier cuida do estilo; não reativar regras estilísticas conflitantes.
+- Após mudanças relevantes: rodar `yarn lint` (e `yarn format` se tocou muitos arquivos).
+
+## Testes — Vitest
+
+- `packages/shared`: Vitest (schemas Zod, utilitários puros).
+- `apps/backend`: Vitest + `@effect/vitest` (`it.effect`, `it.scoped`, etc.) para Effects.
+- Arquivos: `*.test.ts` / `*.spec.ts` ao lado do código ou em pasta `tests/`.
+- Comandos: `yarn test` / `yarn test:watch`.
+- Builds excluem testes (`tsconfig.build.json`); não emitir testes em `dist/`.
+- Preferir testes de use case com Layers mockados; evitar chamar banco real em unitários.
+- Não trocar por Jest/Mocha sem alinhamento do time.
+
+## Projetos futuros (template)
+
+Ao iniciar monorepos semelhantes, replicar:
+
+1. Prettier na raiz + scripts `format` / `format:write`
+2. ESLint por workspace + `eslint-config-prettier`
+3. Vitest no shared e backend; `@effect/vitest` onde houver Effect
+4. Scripts agregados na raiz: `lint`, `format`, `test`
+5. Documentar em `AGENTS.md` e nos agentes `.cursor/agents/`

@@ -1,0 +1,32 @@
+---
+description: Full Stack especialista em Vue 3, Nuxt 4 e TypeScript (app + Nitro)
+globs: '**/*.{vue,ts}'
+alwaysApply: true
+---
+
+# Papel: Full Stack Vue / Nuxt / TypeScript
+
+Atue como desenvolvedor full stack sênior neste monorepo Yarn: front em Vue 3 + Nuxt 4 (`apps/web`, `srcDir: app/`), API Express + Effect + Prisma (`apps/backend`), schemas em `@razconms/shared`, tipagem estrita em TypeScript. Nitro (`apps/web/server/`) cobre rotas de suporte da web (health, SEO, CSP).
+
+## Front (Vue / Nuxt)
+
+- Preferir `<script setup lang="ts">`, Composition API e auto-imports do Nuxt onde fizer sentido.
+- Lógica reutilizável em `composables/`; estado global em Pinia (`stores/`); constantes compartilhadas em `constants/`; tipos em `types/`.
+- Páginas finas: composição com componentes em `components/`; evitar componentes monolíticos sem necessidade.
+- SEO e `<head>`: alterações em `composables/useSiteSeoHead.ts` e plugins de init, sem duplicar meta em vários lugares.
+- Respeitar `nuxt-security` (CSP, headers): não relaxar `script-src` / `style-src` sem motivo documentado.
+
+## TypeScript
+
+- Tipar props, emits e retornos de composables; evitar `any` salvo interoperabilidade inevitável e com comentário breve.
+- APIs públicas de stores e composables com interfaces ou tipos nomeados em `types/`.
+
+## Back (Nitro)
+
+- Handlers em `server/api/` e `server/routes/` com validação clara de input; utilitários compartilhados em `server/utils/`.
+- Usar `useRuntimeConfig(event)` quando precisar de config por requisição.
+
+## Entrega
+
+- Manter mobile-first, acessibilidade básica (labels, foco, contraste) e alinhamento com tokens Tailwind do projeto.
+- Após mudanças relevantes: `yarn lint` e `yarn test`; Prettier via `yarn format` / `yarn format:write`; builds só com acordo do time (ver `AGENTS.md` e `.cursor/rules/tooling-monorepo.mdc`).
