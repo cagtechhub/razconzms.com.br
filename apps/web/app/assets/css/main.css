@@ -139,4 +139,79 @@
   .portal-table tbody tr {
     @apply transition hover:bg-brand-navy-50/50;
   }
+
+  /* Marketing — home moderna */
+  .btn-pill-accent {
+    @apply inline-flex items-center justify-center rounded-full bg-brand-gold-500 px-6 py-3 text-sm font-semibold text-brand-navy-950 shadow-[0_10px_30px_-10px_rgba(171,151,84,0.65)] transition hover:bg-brand-gold-400 hover:shadow-[0_14px_34px_-10px_rgba(171,151,84,0.75)];
+  }
+
+  .btn-pill-outline {
+    @apply inline-flex items-center justify-center rounded-full border border-white/25 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-white/10;
+  }
+
+  .marketing-card {
+    @apply rounded-[1.25rem] border border-border/80 bg-surface shadow-[0_16px_48px_-24px_rgba(15,20,36,0.28)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_56px_-24px_rgba(15,20,36,0.35)];
+  }
+
+  .marketing-icon {
+    @apply grid size-12 place-items-center rounded-full bg-brand-navy-50 text-brand-navy-900;
+  }
+
+  .stat-number {
+    @apply text-4xl font-bold tracking-tight text-brand-navy-900 tabular-nums sm:text-5xl;
+  }
+}
+
+@layer utilities {
+  /* Visível por padrão; some some JS ativa o estado "pronto" para animar */
+  html.js-reveal [data-reveal]:not([data-revealed='true']) {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+
+  html.js-reveal [data-reveal] {
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  html.js-reveal [data-reveal][data-revealed='true'] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.js-reveal [data-reveal]:not([data-revealed='true']),
+    html.js-reveal [data-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  .animate-float {
+    animation: razcon-float 6s ease-in-out infinite;
+  }
+
+  .animate-float-delayed {
+    animation: razcon-float 7.5s ease-in-out 0.8s infinite;
+  }
+
+  @keyframes razcon-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float,
+    .animate-float-delayed {
+      animation: none;
+    }
+  }
 }

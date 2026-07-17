@@ -9,6 +9,7 @@ useSiteSeoHead({
 <template>
   <div>
     <HomeHeroSection />
+    <HomeStatsSection />
     <HomeServicesSection />
     <HomeAboutSection />
     <HomeTeamSection />

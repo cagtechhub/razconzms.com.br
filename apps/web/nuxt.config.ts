@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     server: {
-      allowedHosts: ['76cc-168-232-70-40.ngrok-free.app']
+      allowedHosts: ['45a4-168-232-70-40.ngrok-free.app']
     }
   },
   runtimeConfig: {

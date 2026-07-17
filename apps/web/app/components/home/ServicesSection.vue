@@ -56,27 +56,31 @@ const services = [
 </script>
 
 <template>
-  <section id="servicos" class="border-b border-border bg-surface py-20 sm:py-24">
+  <section id="servicos" class="bg-surface-muted py-20 sm:py-24">
     <div class="container-page">
-      <div class="max-w-2xl">
+      <div class="mx-auto max-w-2xl text-center" data-reveal>
         <p class="eyebrow">Nossas soluções</p>
-        <h2 class="section-title">Uma contabilidade que entende o seu negócio</h2>
-        <p class="section-lead">
-          Da rotina obrigatória à visão estratégica, reunimos o que sua empresa precisa
-          para operar bem e crescer com consistência.
+        <h2 class="section-title">Tudo o que sua empresa precisa para crescer</h2>
+        <p class="section-lead mx-auto">
+          Tenha especialistas dedicados ao seu negócio, cuidando diariamente da
+          contabilidade com clareza e proximidade.
         </p>
       </div>
-      <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
+      <ul class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <li
-          v-for="service in services"
+          v-for="(service, index) in services"
           :key="service.number"
-          class="group rounded-[var(--radius-lg)] border border-border bg-surface p-6 transition hover:-translate-y-1 hover:border-brand-navy-200 hover:shadow-lg"
+          class="marketing-card group p-7"
+          data-reveal
+          :data-reveal-delay="String(index * 60)"
         >
-          <div class="flex items-start justify-between">
+          <div class="flex items-start justify-between gap-3">
             <span
-              class="grid size-11 place-items-center rounded-[var(--radius-md)] bg-brand-navy-50 text-brand-navy-900 transition group-hover:bg-brand-navy-900 group-hover:text-white"
-              ><component :is="service.icon" class="size-5" aria-hidden="true"
-            /></span>
+              class="marketing-icon transition duration-300 group-hover:bg-brand-navy-900 group-hover:text-white"
+            >
+              <component :is="service.icon" class="size-5" aria-hidden="true" />
+            </span>
             <span class="text-xs font-semibold tabular-nums text-brand-gold-600">{{
               service.number
             }}</span>
@@ -89,9 +93,11 @@ const services = [
           </p>
           <NuxtLink
             to="/#contato"
-            class="focus-ring mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-navy-900 hover:text-brand-gold-700"
-            >Saiba mais <ArrowRight class="size-3.5" aria-hidden="true"
-          /></NuxtLink>
+            class="focus-ring mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-navy-900 transition hover:text-brand-gold-700"
+          >
+            Saiba mais
+            <ArrowRight class="size-3.5" aria-hidden="true" />
+          </NuxtLink>
         </li>
       </ul>
     </div>

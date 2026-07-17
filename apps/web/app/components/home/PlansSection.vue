@@ -39,9 +39,9 @@ const plans = [
 </script>
 
 <template>
-  <section id="planos" class="border-b border-border bg-brand-navy-50 py-20 sm:py-24">
+  <section id="planos" class="bg-surface py-20 sm:py-24">
     <div class="container-page">
-      <div class="mx-auto max-w-2xl text-center">
+      <div class="mx-auto max-w-2xl text-center" data-reveal>
         <p class="eyebrow">Planos para cada fase</p>
         <h2 class="section-title">Escolha o nível de apoio que faz sentido hoje</h2>
         <p class="section-lead mx-auto">
@@ -49,22 +49,26 @@ const plans = [
           planos têm atendimento humano e transparente.
         </p>
       </div>
-      <div class="mt-12 grid items-start gap-5 lg:grid-cols-3">
+
+      <div class="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
         <article
-          v-for="plan in plans"
+          v-for="(plan, index) in plans"
           :key="plan.name"
-          class="relative rounded-[var(--radius-lg)] border p-7"
+          class="relative flex flex-col rounded-[1.5rem] border p-7 transition duration-300"
           :class="
             plan.featured
-              ? 'border-brand-navy-900 bg-brand-navy-900 text-white shadow-xl lg:-translate-y-3'
-              : 'border-border bg-surface'
+              ? 'border-brand-navy-900 bg-brand-navy-900 text-white shadow-[0_28px_60px_-28px_rgba(15,20,36,0.55)] lg:-translate-y-4'
+              : 'marketing-card border-border'
           "
+          data-reveal
+          :data-reveal-delay="String(index * 80)"
         >
           <span
             v-if="plan.featured"
             class="absolute -top-3 left-7 rounded-full bg-brand-gold-500 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-brand-navy-950"
-            >Mais escolhido</span
           >
+            Mais escolhido
+          </span>
           <p
             class="text-sm font-semibold"
             :class="plan.featured ? 'text-brand-gold-300' : 'text-brand-gold-700'"
@@ -84,7 +88,7 @@ const plans = [
             {{ plan.price }}
           </p>
           <ul
-            class="mt-7 space-y-3 border-t pt-6"
+            class="mt-7 flex-1 space-y-3 border-t pt-6"
             :class="plan.featured ? 'border-white/10' : 'border-border'"
           >
             <li
@@ -96,18 +100,21 @@ const plans = [
               <Check
                 class="size-4 shrink-0"
                 :class="plan.featured ? 'text-brand-gold-300' : 'text-brand-navy-600'"
-              />{{ feature }}
+                aria-hidden="true"
+              />
+              {{ feature }}
             </li>
           </ul>
           <a
             :href="whatsappHref"
             class="focus-ring mt-8 w-full"
-            :class="plan.featured ? 'btn-accent' : 'btn-primary'"
+            :class="plan.featured ? 'btn-pill-accent' : 'btn-primary'"
             :target="whatsappHref.startsWith('http') ? '_blank' : undefined"
             :rel="whatsappHref.startsWith('http') ? 'noopener noreferrer' : undefined"
-            >Conversar sobre este plano
-            <ArrowRight class="ml-2 size-4" aria-hidden="true"
-          /></a>
+          >
+            Conversar sobre este plano
+            <ArrowRight class="ml-2 size-4" aria-hidden="true" />
+          </a>
         </article>
       </div>
     </div>
