@@ -5,6 +5,26 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  schemas = ["razconms"]
+}
+
+enum LeadChannel {
+  WEBSITE
+  WHATSAPP
+  INSTAGRAM
+  FACEBOOK
+  REFERRAL
+  OTHER
+  @@schema("razconms")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CONVERTED
+  LOST
+  @@schema("razconms")
 }
 
 model Contact {
@@ -15,7 +35,71 @@ model Contact {
   message   String?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-
+  leads     Lead[]
+  @@schema("razconms")
   @@index([email])
   @@map("contacts")
+}
+
+model Lead {
+  id        String      @id @default(cuid())
+  fullName  String      @map("full_name")
+  email     String?
+  phone     String?
+  notes     String?
+  channel   LeadChannel @default(WEBSITE)
+  status    LeadStatus  @default(NEW)
+  contactId String?     @map("contact_id")
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+  contact   Contact?    @relation(fields: [contactId], references: [id], onDelete: SetNull)
+
+  @@index([channel])
+  @@index([status])
+  @@index([email])
+  @@index([createdAt])
+  @@map("leads")
+  @@schema("razconms")
+}
+
+model SiteSettings {
+  id                String   @id @default(cuid())
+  siteUrl           String   @default("") @map("site_url")
+  siteName          String   @default("Razcon Soluções Contábeis") @map("site_name")
+  seoLocality       String   @default("Brasil") @map("seo_locality")
+  noIndex           Boolean  @default(false) @map("no_index")
+  businessAddress   String   @default("") @map("business_address")
+  businessPhone     String   @default("") @map("business_phone")
+  contactEmail      String   @default("contato@razconms.com.br") @map("contact_email")
+  whatsappNumber    String   @default("") @map("whatsapp_number")
+  whatsappMessage   String   @default("Olá! Gostaria de saber mais sobre os serviços contábeis da Razcon.") @map("whatsapp_message")
+  instagramUrl      String   @default("") @map("instagram_url")
+  facebookUrl       String   @default("") @map("facebook_url")
+  linkedinUrl       String   @default("") @map("linkedin_url")
+  defaultOgImageUrl String   @default("") @map("default_og_image_url")
+  ga4MeasurementId  String   @default("") @map("ga4_measurement_id")
+  metaPixelId       String   @default("") @map("meta_pixel_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+  @@schema("razconms")
+}
+
+model TeamMember {
+  id          String   @id @default(cuid())
+  name        String
+  role        String
+  initials    String
+  imageUrl    String?  @map("image_url")
+  storagePath String?  @map("storage_path")
+  sortOrder   Int      @default(0) @map("sort_order")
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([active])
+  @@index([sortOrder])
+  @@map("team_members")
+  @@schema("razconms")
 }

@@ -18,6 +18,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@pinia/nuxt', '@nuxt/eslint', 'nuxt-security', '@nuxt/image'],
   css: ['~/assets/css/main.css'],
+  build: {
+    transpile: ['@razconms/shared']
+  },
   vite: {
     plugins: [tailwindcss()],
     server: {
@@ -55,6 +58,12 @@ export default defineNuxtConfig({
     }
   },
   routeRules: {
+    '/admin/**': {
+      robots: false,
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    },
     '/img/**': {
       headers: {
         'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable'
@@ -86,11 +95,14 @@ export default defineNuxtConfig({
           "'self'",
           'data:',
           'https://*.google-analytics.com',
-          'https://*.facebook.net'
+          'https://*.facebook.net',
+          'https://*.supabase.co'
         ],
         'connect-src': [
           "'self'",
           'https://*.google-analytics.com',
+          'https://*.supabase.co',
+          'wss://*.supabase.co',
           ...(publicApiOrigin ? [publicApiOrigin] : []),
           ...(publicSupabaseOrigin ? [publicSupabaseOrigin] : [])
         ],

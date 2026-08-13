@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { UserRound } from 'lucide-vue-next'
+import type { TeamMember } from '@razconms/shared'
 
-type TeamMember = {
+type PublicTeamMember = {
   name: string
   role: string
   initials: string
@@ -9,7 +10,7 @@ type TeamMember = {
   image?: string
 }
 
-const team: TeamMember[] = [
+const fallbackTeam: PublicTeamMember[] = [
   {
     name: 'Rita',
     role: 'Diretora',
@@ -39,6 +40,28 @@ const team: TeamMember[] = [
     image: undefined
   }
 ]
+
+const tones = ['bg-brand-navy-100', 'bg-brand-gold-100', 'bg-brand-navy-50']
+
+const mapMember = (member: TeamMember, index: number): PublicTeamMember => ({
+  name: member.name,
+  role: member.role,
+  initials: member.initials,
+  tone: tones[index % tones.length] ?? 'bg-brand-navy-50',
+  image: member.imageUrl || undefined
+})
+
+const { data: team } = await useAsyncData('public-team', async () => {
+  try {
+    const base = resolveApiBase()
+    if (!base) return fallbackTeam
+    const members = await $fetch<TeamMember[]>(`${base}/team`)
+    if (!members.length) return fallbackTeam
+    return members.map(mapMember)
+  } catch {
+    return fallbackTeam
+  }
+})
 </script>
 
 <template>
@@ -60,7 +83,7 @@ const team: TeamMember[] = [
 
       <div class="mt-14 grid gap-6 md:grid-cols-3">
         <article
-          v-for="(person, index) in team"
+          v-for="(person, index) in team || fallbackTeam"
           :key="person.name"
           class="marketing-card overflow-hidden"
           data-reveal

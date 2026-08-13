@@ -30,6 +30,7 @@ RUN yarn install --frozen-lockfile --non-interactive
 # -----------------------------------------------------------------------------
 FROM deps AS build
 
+COPY packages/shared ./packages/shared
 COPY apps/web ./apps/web
 
 ARG NUXT_PUBLIC_API_BASE
@@ -50,7 +51,8 @@ ENV NUXT_PUBLIC_SUPABASE_ANON_KEY=$NUXT_PUBLIC_SUPABASE_ANON_KEY
 # Nitro + yarn workspaces com Vue hoisted pode deixar `.output/server/node_modules/vue`
 # incompleto (sem `index.mjs`). Copiamos os pacotes reais da instalação raiz.
 # O trace do Nitro também pode deixar `unhead` sem `dist/server.mjs`.
-RUN yarn workspace @razconms/web build \
+RUN yarn workspace @razconms/shared build \
+  && yarn workspace @razconms/web build \
   && mkdir -p apps/web/.output/server/node_modules \
   && rm -rf apps/web/.output/server/node_modules/vue \
             apps/web/.output/server/node_modules/@vue \

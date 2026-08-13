@@ -68,11 +68,13 @@ Padrão da OS Up2tech: Compose **sem** Postgres local e **sem** `ports:` no host
 
 ### Variáveis Nuxt
 
-| Variável               | Onde                       | Valor                                |
-| ---------------------- | -------------------------- | ------------------------------------ |
-| `NUXT_API_BASE`        | runtime SSR (Compose)      | `http://razconms-backend:3001`       |
-| `NUXT_PUBLIC_API_BASE` | browser + CSP no **build** | `https://api.razconms.com.br`        |
-| `NUXT_PUBLIC_SITE_URL` | SEO / runtime              | `https://razconms.com.br`            |
+| Variável                        | Onde                       | Valor                          |
+| ------------------------------- | -------------------------- | ------------------------------ |
+| `NUXT_API_BASE`                 | runtime SSR (Compose)      | `http://razconms-backend:3001` |
+| `NUXT_PUBLIC_API_BASE`          | browser + CSP no **build** | `https://api.razconms.com.br`  |
+| `NUXT_PUBLIC_SITE_URL`          | SEO / runtime              | `https://razconms.com.br`      |
+| `NUXT_PUBLIC_SUPABASE_URL`      | Auth no browser            | `https://xxxx.supabase.co`     |
+| `NUXT_PUBLIC_SUPABASE_ANON_KEY` | Auth no browser            | anon/publishable key           |
 
 Em produção, `NUXT_PUBLIC_*` devem ser `https://` dos domínios reais — **não** `localhost`.
 
@@ -94,7 +96,27 @@ Vars opcionais: `APP_DIR` (default `/opt/razconms.com.br`), `DOMAIN`.
 
 O usuário `deploy` deve estar no grupo `docker`. Build acontece na VPS (a web precisa dos build args do `.env`).
 
+## Admin (Supabase Auth)
+
+Painel em `/admin` (noindex). Login com e-mail/senha do Supabase Auth. O backend valida o JWT e a allowlist `ADMIN_ALLOWED_EMAILS`.
+
+Onboarding:
+
+1. Criar usuário no Supabase Auth.
+2. Incluir o e-mail em `ADMIN_ALLOWED_EMAILS` (CSV).
+3. Criar bucket público `SUPABASE_STORAGE_BUCKET` (ex.: `razconms-media`) para fotos da equipe.
+4. Acessar `/admin/login`.
+
+O portal `/area-do-cliente` permanece separado (não usa a allowlist de staff).
+
 ## API
 
 - `GET /health` — health check (API + banco)
-- `POST /contacts` — cadastro de lead/contato
+- `POST /contacts` — contato público (cria Contact + Lead `WEBSITE`)
+- `GET /settings` — configurações públicas do site
+- `GET /team` — equipe ativa
+- `GET /admin/dashboard` — totais (JWT admin)
+- `GET|POST /admin/leads`, `PUT|DELETE /admin/leads/:id`
+- `GET|PUT /admin/settings`
+- `GET|POST /admin/team`, `PUT|DELETE /admin/team/:id`
+- `POST /admin/uploads` — upload de imagem (Storage)

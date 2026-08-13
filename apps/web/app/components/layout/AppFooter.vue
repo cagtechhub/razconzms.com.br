@@ -1,7 +1,6 @@
 <script setup lang="ts">
-const config = useRuntimeConfig()
 const year = new Date().getFullYear()
-const contactEmail = computed(() => String(config.public.contactEmail || '').trim())
+const { contactEmail } = useSiteSettings()
 </script>
 
 <template>

@@ -2,20 +2,41 @@
 import { ArrowRight, Mail, MapPin, Phone } from 'lucide-vue-next'
 
 const { whatsappHref } = useWhatsapp()
-const config = useRuntimeConfig()
-const contactEmail = computed(() =>
-  String(config.public.contactEmail || 'contato@razconms.com.br')
-)
-const businessPhone = computed(() =>
-  String(config.public.businessPhone || '(67) 0000-0000')
-)
-const businessAddress = computed(() =>
-  String(config.public.businessAddress || 'Atendimento para empresas em todo o Brasil')
-)
-const contactSent = ref(false)
+const { contactEmail, businessPhone, businessAddress } = useSiteSettings()
+const apiBase = useApiBase()
 
-function submitContact() {
-  contactSent.value = true
+const contactSent = ref(false)
+const contactError = ref('')
+const submitting = ref(false)
+const fullName = ref('')
+const email = ref('')
+const message = ref('')
+
+async function submitContact() {
+  contactError.value = ''
+  submitting.value = true
+  try {
+    const base = apiBase.value
+    if (!base) {
+      throw new Error('API indisponível')
+    }
+    await $fetch(`${base}/contacts`, {
+      method: 'POST',
+      body: {
+        fullName: fullName.value,
+        email: email.value,
+        message: message.value
+      }
+    })
+    contactSent.value = true
+    fullName.value = ''
+    email.value = ''
+    message.value = ''
+  } catch {
+    contactError.value = 'Não foi possível enviar. Tente novamente em instantes.'
+  } finally {
+    submitting.value = false
+  }
 }
 </script>
 
@@ -65,7 +86,7 @@ function submitContact() {
             class="focus-ring flex w-fit items-center gap-3 rounded-[var(--radius-sm)] hover:text-white"
           >
             <Phone class="size-4 text-brand-gold-400" aria-hidden="true" />
-            {{ businessPhone }}
+            {{ businessPhone || '(67) 0000-0000' }}
           </a>
           <div class="flex items-start gap-3">
             <MapPin
@@ -88,10 +109,12 @@ function submitContact() {
           >
             Recebemos seus dados. Em breve nosso time entra em contato.
           </div>
+          <p v-if="contactError" class="mb-4 text-sm text-danger">{{ contactError }}</p>
           <div class="grid gap-4">
             <label class="text-sm font-medium">
               Nome
               <input
+                v-model="fullName"
                 required
                 class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 text-sm"
                 type="text"
@@ -102,6 +125,7 @@ function submitContact() {
             <label class="text-sm font-medium">
               E-mail
               <input
+                v-model="email"
                 required
                 class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 text-sm"
                 type="email"
@@ -112,14 +136,19 @@ function submitContact() {
             <label class="text-sm font-medium">
               Como podemos ajudar?
               <textarea
+                v-model="message"
                 required
                 class="focus-ring mt-1.5 min-h-24 w-full resize-y rounded-[var(--radius-md)] border border-border px-3 py-2.5 text-sm"
                 name="message"
                 placeholder="Conte brevemente sobre sua empresa"
               />
             </label>
-            <button class="btn-pill-accent focus-ring mt-1 w-full" type="submit">
-              Enviar mensagem
+            <button
+              class="btn-pill-accent focus-ring mt-1 w-full"
+              type="submit"
+              :disabled="submitting"
+            >
+              {{ submitting ? 'Enviando…' : 'Enviar mensagem' }}
               <ArrowRight class="ml-2 size-4" aria-hidden="true" />
             </button>
           </div>

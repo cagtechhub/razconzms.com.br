@@ -7,6 +7,7 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
+    "prebuild": "yarn workspace @razconms/shared build",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -21,6 +22,8 @@
     "@nuxt/eslint": "1.15.2",
     "@nuxt/image": "2.0.0",
     "@pinia/nuxt": "^0.11.3",
+    "@razconms/shared": "*",
+    "@supabase/supabase-js": "^2.105.4",
     "@tailwindcss/vite": "^4.1.11",
     "@unhead/schema-org": "^3.0.4",
     "lucide-vue-next": "^0.468.0",
