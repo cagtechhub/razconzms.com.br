@@ -20,12 +20,29 @@ function submitContact() {
 </script>
 
 <template>
-  <section id="contato" class="relative overflow-hidden bg-brand-navy-950 py-20 text-white sm:py-24">
-    <div
-      class="pointer-events-none absolute -right-20 top-10 size-72 rounded-full bg-brand-gold-500/15 blur-3xl"
+  <section
+    id="contato"
+    class="relative overflow-hidden bg-brand-navy-950 py-20 text-white sm:py-24"
+  >
+    <img
+      src="/img/empresa/local-diurno.jpeg"
+      alt=""
+      class="absolute inset-0 size-full object-cover object-center"
+      loading="lazy"
+      decoding="async"
       aria-hidden="true"
     />
-    <div class="container-page relative grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+    <div
+      class="pointer-events-none absolute inset-0 bg-brand-navy-950/78"
+      aria-hidden="true"
+    />
+    <div
+      class="pointer-events-none absolute inset-0 bg-gradient-to-r from-brand-navy-950/90 via-brand-navy-950/55 to-brand-navy-950/35"
+      aria-hidden="true"
+    />
+    <div
+      class="container-page relative grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:items-start"
+    >
       <div data-reveal>
         <p class="eyebrow text-brand-gold-300">Vamos conversar</p>
         <h2 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">

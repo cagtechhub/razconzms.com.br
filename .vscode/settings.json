@@ -15,5 +15,8 @@
   "css.lint.unknownAtRules": "ignore",
   "tailwindCSS.includeLanguages": {
     "vue": "vue"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
   }
 }

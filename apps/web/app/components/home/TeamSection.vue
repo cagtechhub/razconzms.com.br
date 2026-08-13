@@ -15,7 +15,7 @@ const team: TeamMember[] = [
     role: 'Diretora',
     initials: 'RT',
     tone: 'bg-brand-navy-100',
-    image: undefined
+    image: '/img/team/rita.jpeg'
   },
   {
     name: 'Tiago',
@@ -29,7 +29,7 @@ const team: TeamMember[] = [
     role: 'Especialista fiscal',
     initials: 'DE',
     tone: 'bg-brand-gold-100',
-    image: '/img/team/marcelo.jpeg'
+    image: '/img/team/debora.jpeg'
   },
   {
     name: 'Caroline',

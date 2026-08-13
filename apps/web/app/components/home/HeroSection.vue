@@ -81,7 +81,7 @@ const benefits = [
         />
         <div class="relative overflow-hidden rounded-[1.75rem] bg-brand-navy-900/40">
           <img
-            src="/img/empresa/local-diurno.jpeg"
+            src="/img/empresa/escritorio-1.jpeg"
             alt="Especialista Razcon"
             class="aspect-[4/5] w-full object-cover object-center sm:aspect-[5/6]"
             loading="eager"
