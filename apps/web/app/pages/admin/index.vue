@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { AdminDashboardStats } from '@razconms/shared'
+import { FolderKanban, RefreshCw, Users } from 'lucide-vue-next'
 
 definePageMeta({
   layout: 'admin',
@@ -33,42 +34,63 @@ await load()
 const cards = computed(() => {
   if (!stats.value) return []
   return [
-    { label: 'Leads novos', value: stats.value.leadsNew },
-    { label: 'Leads total', value: stats.value.leadsTotal },
-    { label: 'Equipe ativa', value: stats.value.teamActive },
-    { label: 'Equipe total', value: stats.value.teamTotal }
+    {
+      label: 'Leads novos',
+      value: stats.value.leadsNew,
+      helper: 'Aguardando primeiro contato',
+      icon: FolderKanban
+    },
+    {
+      label: 'Leads total',
+      value: stats.value.leadsTotal,
+      helper: 'Todos os canais',
+      icon: FolderKanban
+    },
+    {
+      label: 'Equipe ativa',
+      value: stats.value.teamActive,
+      helper: 'Exibida no site',
+      icon: Users
+    },
+    {
+      label: 'Equipe total',
+      value: stats.value.teamTotal,
+      helper: 'Inclui inativos',
+      icon: Users
+    }
   ]
 })
 </script>
 
 <template>
-  <div>
-    <div class="flex flex-wrap items-end justify-between gap-4">
+  <div class="portal-stack">
+    <header class="portal-page-header">
       <div>
         <p class="eyebrow">Painel</p>
-        <h2 class="mt-2 text-2xl font-semibold text-brand-navy-900">Visão geral</h2>
-        <p class="mt-1 text-sm text-text-muted">Resumo de leads e equipe.</p>
+        <h2 class="portal-page-title">Visão geral</h2>
+        <p class="portal-page-desc">Resumo de leads e equipe.</p>
       </div>
       <button type="button" class="btn-secondary focus-ring" @click="load">
+        <RefreshCw class="mr-2 size-4" aria-hidden="true" />
         Atualizar
       </button>
-    </div>
+    </header>
 
-    <p v-if="error" class="mt-4 text-sm text-danger">{{ error }}</p>
-    <p v-else-if="loading" class="mt-4 text-sm text-text-muted">Carregando…</p>
+    <p v-if="error" class="text-sm text-danger">{{ error }}</p>
+    <p v-else-if="loading" class="text-sm text-text-muted">Carregando…</p>
 
-    <div v-else class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <article
-        v-for="card in cards"
-        :key="card.label"
-        class="rounded-[var(--radius-lg)] border border-border bg-surface p-5"
-      >
-        <p class="text-xs font-semibold uppercase tracking-wider text-text-muted">
-          {{ card.label }}
-        </p>
-        <p class="mt-2 text-3xl font-semibold tabular-nums text-brand-navy-900">
+    <div v-else class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <article v-for="card in cards" :key="card.label" class="portal-card">
+        <div class="flex items-start justify-between gap-3">
+          <p class="text-sm text-text-muted">{{ card.label }}</p>
+          <span class="portal-icon">
+            <component :is="card.icon" class="size-4" aria-hidden="true" />
+          </span>
+        </div>
+        <p class="mt-5 text-2xl font-semibold tabular-nums text-brand-navy-900">
           {{ card.value }}
         </p>
+        <p class="mt-1 text-xs text-text-muted">{{ card.helper }}</p>
       </article>
     </div>
   </div>

@@ -191,16 +191,14 @@ await load()
 </script>
 
 <template>
-  <div>
-    <div class="flex flex-wrap items-end justify-between gap-4">
+  <div class="portal-stack">
+    <header class="portal-page-header">
       <div>
         <p class="eyebrow">Site</p>
-        <h2 class="mt-2 text-2xl font-semibold text-brand-navy-900">Equipe</h2>
-        <p class="mt-1 text-sm text-text-muted">
-          Membros exibidos na seção pública do site.
-        </p>
+        <h2 class="portal-page-title">Equipe</h2>
+        <p class="portal-page-desc">Membros exibidos na seção pública do site.</p>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
         <button type="button" class="btn-secondary focus-ring" @click="load">
           Atualizar
         </button>
@@ -208,22 +206,22 @@ await load()
           Novo membro
         </button>
       </div>
-    </div>
+    </header>
 
-    <p v-if="error" class="mt-4 text-sm text-danger">{{ error }}</p>
-    <p v-else-if="loading" class="mt-4 text-sm text-text-muted">Carregando…</p>
+    <p v-if="error" class="text-sm text-danger">{{ error }}</p>
+    <p v-else-if="loading" class="text-sm text-text-muted">Carregando…</p>
 
-    <ul v-else class="mt-6 space-y-3">
+    <ul v-else class="space-y-3">
       <li
         v-if="!members.length"
-        class="rounded-[var(--radius-lg)] border border-border bg-surface px-4 py-8 text-center text-text-muted"
+        class="portal-card px-4 py-8 text-center text-text-muted"
       >
         Nenhum membro cadastrado.
       </li>
       <li
         v-for="member in members"
         :key="member.id"
-        class="flex items-center gap-4 rounded-[var(--radius-lg)] border border-border bg-surface p-4"
+        class="portal-card flex items-center gap-4"
       >
         <img
           v-if="member.imageUrl"

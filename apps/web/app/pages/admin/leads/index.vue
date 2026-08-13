@@ -176,16 +176,16 @@ await load()
 </script>
 
 <template>
-  <div>
-    <div class="flex flex-wrap items-end justify-between gap-4">
+  <div class="portal-stack">
+    <header class="portal-page-header">
       <div>
         <p class="eyebrow">CRM</p>
-        <h2 class="mt-2 text-2xl font-semibold text-brand-navy-900">Leads</h2>
-        <p class="mt-1 text-sm text-text-muted">
+        <h2 class="portal-page-title">Leads</h2>
+        <p class="portal-page-desc">
           Contatos capturados pelo site e registros manuais.
         </p>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
         <button type="button" class="btn-secondary focus-ring" @click="load">
           Atualizar
         </button>
@@ -193,10 +193,10 @@ await load()
           Novo lead
         </button>
       </div>
-    </div>
+    </header>
 
     <form
-      class="mt-6 grid gap-3 rounded-[var(--radius-lg)] border border-border bg-surface p-4 sm:grid-cols-4"
+      class="portal-card grid gap-3 sm:grid-cols-4"
       @submit.prevent="load"
     >
       <label class="text-sm font-medium text-brand-navy-900 sm:col-span-2">
@@ -237,15 +237,12 @@ await load()
       </div>
     </form>
 
-    <p v-if="error" class="mt-4 text-sm text-danger">{{ error }}</p>
-    <p v-else-if="loading" class="mt-4 text-sm text-text-muted">Carregando…</p>
+    <p v-if="error" class="text-sm text-danger">{{ error }}</p>
+    <p v-else-if="loading" class="text-sm text-text-muted">Carregando…</p>
 
-    <div
-      v-else
-      class="mt-6 overflow-x-auto rounded-[var(--radius-lg)] border border-border bg-surface"
-    >
-      <table class="min-w-full text-left text-sm">
-        <thead class="bg-brand-navy-50 text-text-muted">
+    <div v-else class="portal-panel overflow-x-auto">
+      <table class="portal-table">
+        <thead>
           <tr>
             <th class="px-4 py-3 font-medium">Nome</th>
             <th class="px-4 py-3 font-medium">E-mail</th>

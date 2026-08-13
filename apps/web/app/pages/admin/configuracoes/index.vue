@@ -83,22 +83,24 @@ await load()
 </script>
 
 <template>
-  <div class="mx-auto max-w-3xl">
-    <div>
-      <p class="eyebrow">Site</p>
-      <h2 class="mt-2 text-2xl font-semibold text-brand-navy-900">Configurações</h2>
-      <p class="mt-1 text-sm text-text-muted">
-        SEO, contato, redes e analytics usados no site público.
-      </p>
-    </div>
+  <div class="portal-stack mx-auto max-w-3xl">
+    <header class="portal-page-header">
+      <div>
+        <p class="eyebrow">Site</p>
+        <h2 class="portal-page-title">Configurações</h2>
+        <p class="portal-page-desc">
+          SEO, contato, redes e analytics usados no site público.
+        </p>
+      </div>
+    </header>
 
-    <p v-if="error" class="mt-4 text-sm text-danger">{{ error }}</p>
-    <p v-else-if="success" class="mt-4 text-sm text-success">{{ success }}</p>
-    <p v-if="loading" class="mt-4 text-sm text-text-muted">Carregando…</p>
+    <p v-if="error" class="text-sm text-danger">{{ error }}</p>
+    <p v-else-if="success" class="text-sm text-success">{{ success }}</p>
+    <p v-if="loading" class="text-sm text-text-muted">Carregando…</p>
 
     <form
       v-else
-      class="mt-6 space-y-4 rounded-[var(--radius-lg)] border border-border bg-surface p-6"
+      class="portal-card space-y-4 p-6"
       @submit.prevent="onSubmit"
     >
       <div class="grid gap-4 sm:grid-cols-2">

@@ -5,6 +5,5 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-docker compose build
-docker compose up -d --remove-orphans
+docker compose up -d --remove-orphans --build
 docker compose ps
