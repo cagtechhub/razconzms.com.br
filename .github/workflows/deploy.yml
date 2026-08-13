@@ -1,24 +1,39 @@
-name: Deploy
+name: Deploy production
 
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 jobs:
   deploy:
+    name: Deploy to VPS
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://${{ vars.DOMAIN }}
+
     steps:
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.2
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          APP_DIR: ${{ vars.APP_DIR }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: APP_DIR
+          script_stop: true
           script: |
             set -euo pipefail
-            cd "${{ vars.APP_DIR || '/opt/razconms.com.br' }}"
+            APP_DIR="${APP_DIR:-/opt/gutierresrecomenda.com.br}"
+            cd "$APP_DIR"
             git fetch origin
-            git checkout "${{ github.ref_name }}"
-            git pull --ff-only origin "${{ github.ref_name }}"
-            ./deploy.sh
+            git checkout main
+            git pull --ff-only origin main
+            chmod +x ./deploy.sh
+            bash ./deploy.sh
