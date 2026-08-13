@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 # Nuxt 4 + Nitro (preset node-server): monorepo Yarn workspaces, runtime só com `.output/`.
 #
-# Build:  docker build -t razconms-web .
-# Run:    docker run --rm -p 3000:3000 -e NUXT_PUBLIC_SITE_URL=https://exemplo.com razconms-web
+# Build:  docker build -f apps/web/Dockerfile -t razconms-web .
+# Run:    docker run --rm -e NUXT_PUBLIC_SITE_URL=https://razconms.com.br razconms-web
 
 # >=22.13 por engines de dependências transitivas (ex.: eslint-plugin-jsdoc)
 ARG NODE_VERSION=24.16
@@ -32,12 +32,33 @@ FROM deps AS build
 
 COPY apps/web ./apps/web
 
+ARG NUXT_PUBLIC_API_BASE
+ARG NUXT_PUBLIC_SITE_URL
+ARG NUXT_PUBLIC_SITE_NAME
+ARG NUXT_PUBLIC_NO_INDEX
+ARG NUXT_PUBLIC_SUPABASE_URL
+ARG NUXT_PUBLIC_SUPABASE_ANON_KEY
+
 ENV NODE_ENV=production
-# O trace de dependências do Nitro pode deixar `unhead` em `.output/server/node_modules`
-# incompleto (sem `dist/server.mjs`). Copiamos o pacote completo da instalação raiz.
+ENV NUXT_PUBLIC_API_BASE=$NUXT_PUBLIC_API_BASE
+ENV NUXT_PUBLIC_SITE_URL=$NUXT_PUBLIC_SITE_URL
+ENV NUXT_PUBLIC_SITE_NAME=$NUXT_PUBLIC_SITE_NAME
+ENV NUXT_PUBLIC_NO_INDEX=$NUXT_PUBLIC_NO_INDEX
+ENV NUXT_PUBLIC_SUPABASE_URL=$NUXT_PUBLIC_SUPABASE_URL
+ENV NUXT_PUBLIC_SUPABASE_ANON_KEY=$NUXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Nitro + yarn workspaces com Vue hoisted pode deixar `.output/server/node_modules/vue`
+# incompleto (sem `index.mjs`). Copiamos os pacotes reais da instalação raiz.
+# O trace do Nitro também pode deixar `unhead` sem `dist/server.mjs`.
 RUN yarn workspace @razconms/web build \
-  && rm -rf /app/apps/web/.output/server/node_modules/unhead \
-  && cp -a /app/node_modules/unhead /app/apps/web/.output/server/node_modules/unhead
+  && mkdir -p apps/web/.output/server/node_modules \
+  && rm -rf apps/web/.output/server/node_modules/vue \
+            apps/web/.output/server/node_modules/@vue \
+            apps/web/.output/server/node_modules/.nitro \
+            apps/web/.output/server/node_modules/unhead \
+  && cp -a node_modules/vue apps/web/.output/server/node_modules/vue \
+  && cp -a node_modules/@vue apps/web/.output/server/node_modules/@vue \
+  && cp -a node_modules/unhead apps/web/.output/server/node_modules/unhead
 
 # -----------------------------------------------------------------------------
 # Imagem final (apenas artefacto Nitro)
@@ -47,7 +68,6 @@ FROM node:${NODE_VERSION}-alpine AS runtime
 WORKDIR /app
 
 ENV NODE_ENV=production
-# Nitro / Node escutam em todas as interfaces dentro do container
 ENV HOST=0.0.0.0
 ENV PORT=3000
 ENV NITRO_HOST=0.0.0.0

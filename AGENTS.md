@@ -71,6 +71,15 @@ Ver `STYLE_GUIDE.md` na raiz para exemplos de uso por contexto (dashboard, tabel
 - Não usar `localStorage`/`sessionStorage` em componentes que rodem como Artifacts/preview.
 - Não expor dados fiscais/pessoais de clientes em logs ou mensagens de erro no client-side.
 
+## Deploy (Docker + Traefik + Supabase)
+
+Produção na OS: `docker-compose.yml` + Traefik (rede `web`, nunca `host`) + Postgres do Supabase. Sem serviço `db` e sem `ports:` no host. Ver README seção **Docker + Traefik**.
+
+- SSR: `NUXT_API_BASE=http://razconms-backend:3001`
+- Browser/CSP: `NUXT_PUBLIC_API_BASE=https://api.…` (build args no Dockerfile da web)
+- Prisma: gerar client e copiar `output` para `dist` (wasm/runtime)
+- Vue: pin único via `resolutions` (Yarn 1)
+
 ## Entrega
 
 - Manter mobile-first, acessibilidade básica (labels, foco, contraste) e alinhamento com tokens Tailwind do projeto.

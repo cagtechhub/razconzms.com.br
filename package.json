@@ -24,7 +24,19 @@
     "test:watch": "concurrently -n shared,api -c magenta,green \"yarn workspace @razconms/shared test:watch\" \"yarn workspace @razconms/backend test:watch\"",
     "db:generate": "yarn workspace @razconms/backend db:generate",
     "db:migrate": "yarn workspace @razconms/backend db:migrate",
+    "db:push": "yarn workspace @razconms/backend db:push",
     "postinstall": "yarn workspace @razconms/web postinstall"
+  },
+  "resolutions": {
+    "vue": "3.5.39",
+    "@vue/compiler-core": "3.5.39",
+    "@vue/compiler-dom": "3.5.39",
+    "@vue/compiler-sfc": "3.5.39",
+    "@vue/reactivity": "3.5.39",
+    "@vue/runtime-core": "3.5.39",
+    "@vue/runtime-dom": "3.5.39",
+    "@vue/server-renderer": "3.5.39",
+    "@vue/shared": "3.5.39"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

@@ -12,8 +12,9 @@ Monorepo com landing page Nuxt 4 + Tailwind v4 e API Express + Effect (clean arc
 ├── packages/
 │   └── shared/       # @razconms/shared — schemas Zod compartilhados
 ├── package.json
-├── Dockerfile        # imagem da web
-└── docker-compose.yml
+├── docker-compose.yml
+├── deploy.sh
+└── .github/workflows/deploy.yml
 ```
 
 ## Backend (clean architecture)
@@ -51,11 +52,47 @@ yarn test            # Vitest (shared + backend)
 yarn test:watch
 ```
 
-## Docker (produção)
+## Docker + Traefik (produção)
+
+Padrão da OS Up2tech: Compose **sem** Postgres local e **sem** `ports:` no host. O Traefik alcança os containers pela rede bridge `web`. Banco = Postgres do Supabase (`DATABASE_URL`).
+
+### Pré-requisitos na VPS
+
+1. Traefik em modo bridge (não `network_mode: host`), com entrypoints `web`/`websecure` e certresolver `letsencrypt`.
+2. Rede externa: `docker network create web`
+3. DNS de `DOMAIN` (site) e `API_DOMAIN` (API) apontando para a OS — **domínios distintos**.
+4. `.env` de produção **só na VPS** (copie de `.env.example`). Não commitar segredos.
+5. Uma vez contra o Supabase: `yarn db:push` (ou `yarn db:migrate`) — **não** rodar em todo deploy.
+
+`TRAEFIK_NETWORK` deve ser `web`. **Nunca** `host` (a rede built-in não aceita aliases e quebra o Compose).
+
+### Variáveis Nuxt
+
+| Variável               | Onde                       | Valor                                |
+| ---------------------- | -------------------------- | ------------------------------------ |
+| `NUXT_API_BASE`        | runtime SSR (Compose)      | `http://razconms-backend:3001`       |
+| `NUXT_PUBLIC_API_BASE` | browser + CSP no **build** | `https://api.razconms.com.br`        |
+| `NUXT_PUBLIC_SITE_URL` | SEO / runtime              | `https://razconms.com.br`            |
+
+Em produção, `NUXT_PUBLIC_*` devem ser `https://` dos domínios reais — **não** `localhost`.
+
+### Subir
 
 ```bash
-docker compose up --build -d
+./deploy.sh
+# equivalente: docker compose build && docker compose up -d
 ```
+
+Se a imagem antiga persistir: `docker compose build --no-cache web` (ou `backend`) e `up -d`.
+
+### GitHub Actions
+
+Workflow: `.github/workflows/deploy.yml` (SSH + `git pull` + `./deploy.sh`).
+
+Secrets: `SSH_HOST`, `SSH_USER`, `SSH_PRIVATE_KEY`.  
+Vars opcionais: `APP_DIR` (default `/opt/razconms.com.br`), `DOMAIN`.
+
+O usuário `deploy` deve estar no grupo `docker`. Build acontece na VPS (a web precisa dos build args do `.env`).
 
 ## API
 

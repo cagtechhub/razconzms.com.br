@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "prebuild": "yarn workspace @razconms/shared build",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "prisma generate && tsc -p tsconfig.build.json && mkdir -p dist/infrastructure/prisma/output && cp -a src/infrastructure/prisma/output/. dist/infrastructure/prisma/output/",
     "start": "node dist/main.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

@@ -10,3 +10,4 @@ yarn.lock
 apps/backend/src/infrastructure/prisma/output
 *.min.js
 *.min.css
+*.sh

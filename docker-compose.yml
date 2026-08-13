@@ -1,74 +1,84 @@
-# Produção: `docker compose up --build -d`
+# Produção na OS (Traefik + Supabase). Não publica ports; não sobe Postgres local.
 #
-# Variáveis públicas do Nuxt usam o prefixo NUXT_PUBLIC_ (ver nuxt.config → runtimeConfig.public).
-# Backend: DATABASE_URL, PORT (padrão 3001).
+# Pré-requisitos na VPS:
+#   docker network create web
+#   DNS de DOMAIN e API_DOMAIN apontando para a OS
+#   .env de produção só na VPS (ver .env.example)
+#
+# Subir: ./deploy.sh   ou   docker compose build && docker compose up -d
 
 services:
-  db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-razconms}
-    ports:
-      - '${POSTGRES_PORT:-5432}:5432'
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-razconms}'
-        ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
   backend:
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
     image: razconms-api:prod
+    container_name: razconms-backend
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
-    ports:
-      - '${API_PORT:-3001}:3001'
-    environment:
-      NODE_ENV: production
-      PORT: 3001
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-razconms}?schema=public
     env_file:
       - .env
+    environment:
+      NODE_ENV: production
+      PORT: '3001'
+      DATABASE_URL: ${DATABASE_URL}
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+    networks:
+      - default
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-web}
+      - traefik.http.routers.razconms-api.rule=Host(`${API_DOMAIN}`)
+      - traefik.http.routers.razconms-api.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.razconms-api.tls=true
+      - traefik.http.routers.razconms-api.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      - traefik.http.services.razconms-api.loadbalancer.server.port=3001
 
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: apps/web/Dockerfile
       args:
-        NODE_VERSION: '24.16'
+        NUXT_PUBLIC_API_BASE: ${NUXT_PUBLIC_API_BASE}
+        NUXT_PUBLIC_SITE_URL: ${NUXT_PUBLIC_SITE_URL}
+        NUXT_PUBLIC_SITE_NAME: ${NUXT_PUBLIC_SITE_NAME:-Razcon Soluções Contábeis}
+        NUXT_PUBLIC_NO_INDEX: ${NUXT_PUBLIC_NO_INDEX:-false}
+        NUXT_PUBLIC_SUPABASE_URL: ${NUXT_PUBLIC_SUPABASE_URL:-}
+        NUXT_PUBLIC_SUPABASE_ANON_KEY: ${NUXT_PUBLIC_SUPABASE_ANON_KEY:-}
     image: razconms-web:prod
+    container_name: razconms-web
     restart: unless-stopped
     depends_on:
       - backend
-    ports:
-      - '${WEB_PORT:-3000}:3000'
+    env_file:
+      - .env
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
-      PORT: 3000
-    env_file:
-      - .env
+      PORT: '3000'
+      NITRO_HOST: 0.0.0.0
+      NITRO_PORT: '3000'
+      NUXT_API_BASE: http://razconms-backend:3001
+      NUXT_PUBLIC_API_BASE: ${NUXT_PUBLIC_API_BASE}
+      NUXT_PUBLIC_SITE_URL: ${NUXT_PUBLIC_SITE_URL}
+      NUXT_PUBLIC_SITE_NAME: ${NUXT_PUBLIC_SITE_NAME:-Razcon Soluções Contábeis}
+      NUXT_PUBLIC_NO_INDEX: ${NUXT_PUBLIC_NO_INDEX:-false}
+      NUXT_PUBLIC_SUPABASE_URL: ${NUXT_PUBLIC_SUPABASE_URL:-}
+      NUXT_PUBLIC_SUPABASE_ANON_KEY: ${NUXT_PUBLIC_SUPABASE_ANON_KEY:-}
+    networks:
+      - default
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-web}
+      - traefik.http.routers.razconms-web.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.razconms-web.entrypoints=${TRAEFIK_ENTRYPOINT:-websecure}
+      - traefik.http.routers.razconms-web.tls=true
+      - traefik.http.routers.razconms-web.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      - traefik.http.services.razconms-web.loadbalancer.server.port=3000
 
-    healthcheck:
-      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/api/health']
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-
-volumes:
-  postgres_data:
+networks:
+  traefik:
+    name: ${TRAEFIK_NETWORK:-web}
+    external: true

@@ -1,5 +1,17 @@
 import tailwindcss from '@tailwindcss/vite'
 
+function envOrigin(value: string | undefined) {
+  if (!value) return ''
+  try {
+    return new URL(value).origin
+  } catch {
+    return value.replace(/\/$/, '')
+  }
+}
+
+const publicApiOrigin = envOrigin(process.env.NUXT_PUBLIC_API_BASE)
+const publicSupabaseOrigin = envOrigin(process.env.NUXT_PUBLIC_SUPABASE_URL)
+
 export default defineNuxtConfig({
   srcDir: 'app/',
   compatibilityDate: '2026-04-01',
@@ -13,7 +25,11 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
+    apiBase: '',
     public: {
+      apiBase: '',
+      supabaseUrl: '',
+      supabaseAnonKey: '',
       siteUrl: '',
       siteName: 'Razcon Soluções Contábeis',
       noIndex: false,
@@ -72,7 +88,12 @@ export default defineNuxtConfig({
           'https://*.google-analytics.com',
           'https://*.facebook.net'
         ],
-        'connect-src': ["'self'", 'https://*.google-analytics.com'],
+        'connect-src': [
+          "'self'",
+          'https://*.google-analytics.com',
+          ...(publicApiOrigin ? [publicApiOrigin] : []),
+          ...(publicSupabaseOrigin ? [publicSupabaseOrigin] : [])
+        ],
         'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
         'object-src': ["'none'"],
         'base-uri': ["'self'"],
