@@ -87,7 +87,7 @@ Em produção, `NUXT_PUBLIC_*` devem ser `https://` dos domínios reais — **n�
 
 Se a imagem antiga persistir: `docker compose build --no-cache web` (ou `backend`) e `up -d`.
 
-Erro SSR `Cannot find package 'hookable'` / `Cannot find module 'entities/decode'`: o Dockerfile da web precisa copiar `vue`/`@vue`/`unhead` e as deps hoisted (`hookable`, `entities`, `@babel/*`) para `.output/server/node_modules`. Rebuild com `--no-cache web`.
+A web segue o Gutierres: o container roda `apps/web/.output/server/index.mjs` **com o `node_modules` da raiz** (o Node resolve `entities`/`hookable`/etc. sozinho). Só `vue`/`@vue` incompletos do trace do Nitro são substituídos.
 
 ### GitHub Actions
 
