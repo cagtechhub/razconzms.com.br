@@ -48,26 +48,34 @@ ENV NUXT_PUBLIC_NO_INDEX=$NUXT_PUBLIC_NO_INDEX
 ENV NUXT_PUBLIC_SUPABASE_URL=$NUXT_PUBLIC_SUPABASE_URL
 ENV NUXT_PUBLIC_SUPABASE_ANON_KEY=$NUXT_PUBLIC_SUPABASE_ANON_KEY
 
-# Nitro + yarn workspaces com Vue hoisted pode deixar `.output/server/node_modules/vue`
-# incompleto (sem `index.mjs`). Copiamos os pacotes reais da instalação raiz.
-# O trace do Nitro também pode deixar `unhead` sem `dist/server.mjs` e sem `hookable`
-# (dependência hoisted: ERR_MODULE_NOT_FOUND em runtime).
+# Nitro + yarn workspaces: Vue/`unhead` no `.output/server/node_modules` ficam
+# incompletos (sem index.mjs e sem deps hoisted: hookable, entities, @babel/*).
+# Copiamos os pacotes reais da instalação raiz + dependências de runtime.
 RUN yarn workspace @razconms/shared build \
   && yarn workspace @razconms/web build \
-  && mkdir -p apps/web/.output/server/node_modules \
+  && mkdir -p apps/web/.output/server/node_modules/@babel \
   && rm -rf apps/web/.output/server/node_modules/vue \
             apps/web/.output/server/node_modules/@vue \
             apps/web/.output/server/node_modules/.nitro \
             apps/web/.output/server/node_modules/unhead \
             apps/web/.output/server/node_modules/@unhead \
             apps/web/.output/server/node_modules/hookable \
-  && cp -a node_modules/vue apps/web/.output/server/node_modules/vue \
-  && cp -a node_modules/@vue apps/web/.output/server/node_modules/@vue \
-  && cp -a node_modules/unhead apps/web/.output/server/node_modules/unhead \
-  && cp -a node_modules/@unhead apps/web/.output/server/node_modules/@unhead \
-  && cp -a node_modules/hookable apps/web/.output/server/node_modules/hookable \
-  && test -f apps/web/.output/server/node_modules/unhead/package.json \
-  && test -f apps/web/.output/server/node_modules/hookable/package.json
+            apps/web/.output/server/node_modules/entities \
+            apps/web/.output/server/node_modules/estree-walker \
+            apps/web/.output/server/node_modules/source-map-js \
+            apps/web/.output/server/node_modules/csstype \
+            apps/web/.output/server/node_modules/@babel \
+  && for pkg in vue @vue unhead @unhead hookable entities estree-walker source-map-js csstype; do \
+       cp -a "node_modules/$pkg" "apps/web/.output/server/node_modules/$pkg"; \
+     done \
+  && mkdir -p apps/web/.output/server/node_modules/@babel \
+  && for pkg in parser types helper-string-parser helper-validator-identifier; do \
+       cp -a "node_modules/@babel/$pkg" "apps/web/.output/server/node_modules/@babel/$pkg"; \
+     done \
+  && test -f apps/web/.output/server/node_modules/vue/package.json \
+  && test -f apps/web/.output/server/node_modules/entities/package.json \
+  && test -f apps/web/.output/server/node_modules/hookable/package.json \
+  && test -f apps/web/.output/server/node_modules/@babel/parser/package.json
 
 # -----------------------------------------------------------------------------
 # Imagem final (apenas artefacto Nitro)
