@@ -240,7 +240,9 @@ function selectNav(id: NavId) {
       :class="mobileNavOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
       aria-label="Menu de navegação"
     >
-      <div class="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-4 lg:h-20 lg:px-5">
+      <div
+        class="flex h-16 shrink-0 items-center justify-between gap-2 border-b border-white/10 px-4 lg:h-20 lg:px-5"
+      >
         <LayoutAppLogo variant="footer" compact />
         <button
           class="focus-ring grid size-9 place-items-center rounded-[var(--radius-sm)] text-white/70 hover:bg-white/10 hover:text-white lg:hidden"
@@ -448,10 +450,7 @@ function selectNav(id: NavId) {
                       <p class="text-sm font-semibold tabular-nums text-brand-navy-900">
                         {{ obligation.date }}
                       </p>
-                      <span
-                        class="portal-badge mt-1"
-                        :class="obligation.statusClass"
-                      >
+                      <span class="portal-badge mt-1" :class="obligation.statusClass">
                         {{ obligation.status }}
                       </span>
                     </div>
@@ -508,11 +507,7 @@ function selectNav(id: NavId) {
                 <label class="portal-search" for="document-search">
                   <Search class="size-4 shrink-0" aria-hidden="true" />
                   <span class="sr-only">Buscar documento</span>
-                  <input
-                    id="document-search"
-                    type="search"
-                    placeholder="Buscar"
-                  />
+                  <input id="document-search" type="search" placeholder="Buscar" />
                 </label>
                 <button
                   class="focus-ring grid size-9 place-items-center rounded-[var(--radius-md)] border border-border text-text-muted transition hover:bg-brand-navy-50 hover:text-brand-navy-900"
@@ -540,9 +535,7 @@ function selectNav(id: NavId) {
                   <tr v-for="document in documents" :key="document.name">
                     <td>
                       <div class="flex items-center gap-3">
-                        <span
-                          class="portal-icon-sm bg-brand-gold-50 text-brand-gold-700"
-                        >
+                        <span class="portal-icon-sm bg-brand-gold-50 text-brand-gold-700">
                           <FileText class="size-4" aria-hidden="true" />
                         </span>
                         <span class="font-medium text-brand-navy-900">{{
@@ -643,11 +636,7 @@ function selectNav(id: NavId) {
               <label class="portal-search" for="report-search">
                 <Search class="size-4 shrink-0" aria-hidden="true" />
                 <span class="sr-only">Buscar relatório</span>
-                <input
-                  id="report-search"
-                  type="search"
-                  placeholder="Buscar"
-                />
+                <input id="report-search" type="search" placeholder="Buscar" />
               </label>
             </div>
             <div class="overflow-x-auto">
@@ -704,9 +693,7 @@ function selectNav(id: NavId) {
               <p class="portal-page-desc">{{ activeItem.description }}</p>
             </div>
             <div class="flex flex-wrap gap-2">
-              <button class="btn-primary focus-ring" type="button">
-                Novo cadastro
-              </button>
+              <button class="btn-primary focus-ring" type="button">Novo cadastro</button>
             </div>
           </header>
 

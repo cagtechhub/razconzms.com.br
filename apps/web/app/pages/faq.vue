@@ -43,9 +43,9 @@ const questions = [
 
 <template>
   <div class="bg-surface-muted">
-    <section class="bg-brand-navy-950 py-16 text-white sm:py-24">
+    <section class="bg-brand-navy-950 py-12 text-white sm:py-16">
       <div class="container-page max-w-4xl text-center">
-        <p class="eyebrow text-brand-gold-300">Tem alguma dúvida?</p>
+        <p class="eyebrow-on-dark">Tem alguma dúvida?</p>
         <h1 class="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
           Respostas simples para decisões importantes
         </h1>
@@ -61,7 +61,7 @@ const questions = [
       class="container-page grid gap-10 py-12 sm:py-16 lg:grid-cols-[0.7fr_1.3fr] lg:items-start"
     >
       <div class="rounded-[var(--radius-lg)] bg-brand-navy-900 p-6 text-white sm:p-7">
-        <MessageCircle class="size-7 text-brand-gold-400" aria-hidden="true" />
+        <MessageCircle class="size-7 text-white" aria-hidden="true" />
         <h2 class="mt-8 text-2xl font-semibold">Não encontrou o que procurava?</h2>
         <p class="mt-3 text-sm leading-relaxed text-white/65">
           Cada empresa tem uma realidade. Fale com a gente e vamos responder pensando no
@@ -83,7 +83,7 @@ const questions = [
           >
             {{ item.question
             }}<ChevronDown
-              class="size-5 shrink-0 text-brand-gold-600 transition group-open:rotate-180"
+              class="size-5 shrink-0 text-brand-navy-700 transition group-open:rotate-180"
               aria-hidden="true"
             />
           </summary>

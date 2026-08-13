@@ -1,19 +1,24 @@
 export { DatabaseHealth } from './database-health.context.js'
 export { ContactRepository } from './contact-repository.context.js'
 export { LeadRepository } from './lead-repository.context.js'
+export { LeadActivityRepository } from './lead-activity-repository.context.js'
 export { SiteSettingsRepository } from './site-settings-repository.context.js'
 export { TeamMemberRepository } from './team-member-repository.context.js'
+export { PlanRepository } from './plan-repository.context.js'
 export type { DatabaseHealthPort } from './ports/database-health.port.js'
 export type { ContactRepositoryPort } from './ports/contact-repository.port.js'
 export type { LeadRepositoryPort } from './ports/lead-repository.port.js'
+export type { LeadActivityRepositoryPort } from './ports/lead-activity-repository.port.js'
 export type { SiteSettingsRepositoryPort } from './ports/site-settings-repository.port.js'
 export type { TeamMemberRepositoryPort } from './ports/team-member-repository.port.js'
+export type { PlanRepositoryPort } from './ports/plan-repository.port.js'
 export { checkHealth } from './use-cases/check-health.use-case.js'
 export { createContact } from './use-cases/create-contact.use-case.js'
 export {
   createLead,
   deleteLead,
   getLeadById,
+  listLeadActivities,
   listLeads,
   updateLead
 } from './use-cases/lead.use-case.js'
@@ -28,4 +33,11 @@ export {
   listTeamMembers,
   updateTeamMember
 } from './use-cases/team-member.use-case.js'
+export {
+  createPlan,
+  deletePlan,
+  getPlanById,
+  listPlans,
+  updatePlan
+} from './use-cases/plan.use-case.js'
 export { getAdminDashboardStats } from './use-cases/admin-dashboard.use-case.js'

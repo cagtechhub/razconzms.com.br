@@ -27,14 +27,14 @@ const testimonials = [
 </script>
 
 <template>
-  <section id="depoimentos" class="bg-brand-navy-50 py-20 sm:py-24">
+  <section id="depoimentos" class="bg-surface-muted py-20 sm:py-24">
     <div class="container-page">
       <div class="mx-auto max-w-2xl text-center" data-reveal>
         <p class="eyebrow">Quem confia</p>
         <h2 class="section-title">Depoimentos que reforçam o nosso compromisso</h2>
         <p class="section-lead mx-auto">
-          Parcerias que vão além dos números — com proximidade, clareza e um jeito
-          moderno de cuidar da contabilidade.
+          Parcerias que vão além dos números — com proximidade, clareza e um jeito moderno
+          de cuidar da contabilidade.
         </p>
       </div>
 
@@ -47,8 +47,8 @@ const testimonials = [
           :data-reveal-delay="String(index * 80)"
         >
           <div class="flex items-center justify-between gap-3">
-            <Quote class="size-8 text-brand-gold-500" aria-hidden="true" />
-            <div class="flex gap-0.5 text-brand-gold-500" aria-label="5 estrelas">
+            <Quote class="size-8 text-brand-navy-900" aria-hidden="true" />
+            <div class="flex gap-0.5 text-brand-navy-900" aria-label="5 estrelas">
               <Star
                 v-for="n in 5"
                 :key="n"

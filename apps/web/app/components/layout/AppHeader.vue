@@ -40,7 +40,7 @@ function closeMobileMenu() {
         <div class="hidden items-center gap-3 md:flex">
           <NuxtLink
             to="/area-do-cliente"
-            class="focus-ring rounded-[var(--radius-sm)] px-2 py-2 text-sm font-semibold text-brand-navy-900 transition hover:text-brand-gold-700"
+            class="focus-ring rounded-[var(--radius-sm)] px-2 py-2 text-sm font-semibold text-brand-navy-900 transition hover:text-brand-navy-700"
           >
             Área do cliente
           </NuxtLink>

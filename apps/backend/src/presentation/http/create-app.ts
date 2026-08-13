@@ -3,12 +3,17 @@ import {
   contactSchema,
   createContactSchema,
   createLeadSchema,
+  createPlanSchema,
   createTeamMemberSchema,
   healthResponseSchema,
+  leadActivitySchema,
   leadSchema,
+  listLeadsQuerySchema,
+  planSchema,
   siteSettingsSchema,
   teamMemberSchema,
   updateLeadSchema,
+  updatePlanSchema,
   updateSiteSettingsSchema,
   updateTeamMemberSchema
 } from '@razconms/shared'
@@ -25,16 +30,22 @@ import {
   checkHealth,
   createContact,
   createLead,
+  createPlan,
   createTeamMember,
   deleteLead,
+  deletePlan,
   deleteTeamMember,
   getAdminDashboardStats,
   getLeadById,
+  getPlanById,
   getSiteSettings,
   getTeamMemberById,
+  listLeadActivities,
   listLeads,
+  listPlans,
   listTeamMembers,
   updateLead,
+  updatePlan,
   updateSiteSettings,
   updateTeamMember
 } from '../../application/index.js'
@@ -46,7 +57,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024, files: 1 },
   fileFilter: (_req, file, cb) => {
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
     if (!allowed.includes(file.mimetype)) {
       cb(new Error('Tipo de arquivo inválido. Use JPEG, PNG, WebP ou GIF.'))
       return
@@ -151,6 +162,7 @@ export const createApp = (
         contacts: 'POST /contacts',
         settings: 'GET /settings',
         team: 'GET /team',
+        plans: 'GET /plans',
         admin: '/admin/*'
       }
     })
@@ -202,16 +214,42 @@ export const createApp = (
     })
   })
 
+  app.get('/plans', (_req, res) => {
+    runEffect(runtime, listPlans({ activeOnly: true }), res, (items) => {
+      res.json(items.map((item) => planSchema.parse(item)))
+    })
+  })
+
   app.get('/admin/dashboard', requireAdmin, (_req, res) => {
     runEffect(runtime, getAdminDashboardStats, res, (stats) => {
       res.json(adminDashboardStatsSchema.parse(stats))
     })
   })
 
-  app.get('/admin/leads', requireAdmin, (_req, res) => {
-    runEffect(runtime, listLeads, res, (items) => {
+  app.get('/admin/leads', requireAdmin, (req, res) => {
+    const parsed = listLeadsQuerySchema.safeParse(req.query)
+    if (!parsed.success) {
+      res.status(400).json({
+        error: 'validation_error',
+        issues: parsed.error.flatten().fieldErrors
+      })
+      return
+    }
+    runEffect(runtime, listLeads(parsed.data), res, (items) => {
       res.json(items.map((item) => leadSchema.parse(item)))
     })
+  })
+
+  app.get('/admin/leads/:id/activities', requireAdmin, (req, res) => {
+    runEffect(
+      runtime,
+      listLeadActivities(req.params.id),
+      res,
+      (items) => {
+        res.json(items.map((item) => leadActivitySchema.parse(item)))
+      },
+      'Lead not found'
+    )
   })
 
   app.get('/admin/leads/:id', requireAdmin, (req, res) => {
@@ -353,6 +391,70 @@ export const createApp = (
         res.status(204).send()
       },
       'Team member not found'
+    )
+  })
+
+  app.get('/admin/plans', requireAdmin, (_req, res) => {
+    runEffect(runtime, listPlans(), res, (items) => {
+      res.json(items.map((item) => planSchema.parse(item)))
+    })
+  })
+
+  app.get('/admin/plans/:id', requireAdmin, (req, res) => {
+    runEffect(
+      runtime,
+      getPlanById(req.params.id),
+      res,
+      (item) => {
+        res.json(planSchema.parse(item))
+      },
+      'Plan not found'
+    )
+  })
+
+  app.post('/admin/plans', requireAdmin, (req, res) => {
+    const parsed = createPlanSchema.safeParse(req.body)
+    if (!parsed.success) {
+      res.status(400).json({
+        error: 'validation_error',
+        issues: parsed.error.flatten().fieldErrors
+      })
+      return
+    }
+    runEffect(runtime, createPlan(parsed.data), res, (item) => {
+      res.status(201).json(planSchema.parse(item))
+    })
+  })
+
+  app.put('/admin/plans/:id', requireAdmin, (req, res) => {
+    const parsed = updatePlanSchema.safeParse(req.body)
+    if (!parsed.success) {
+      res.status(400).json({
+        error: 'validation_error',
+        issues: parsed.error.flatten().fieldErrors
+      })
+      return
+    }
+    runEffect(
+      runtime,
+      updatePlan(req.params.id, parsed.data),
+      res,
+      (item) => {
+        res.json(planSchema.parse(item))
+      },
+      'Plan not found'
+    )
+  })
+
+  app.delete('/admin/plans/:id', requireAdmin, (req, res) => {
+    runEffect(
+      runtime,
+      deletePlan(req.params.id),
+      res,
+      () => {
+        res.status(204).send()
+      },
+      'Plan not found'
     )
   })
 

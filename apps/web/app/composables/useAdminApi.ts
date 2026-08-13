@@ -1,16 +1,23 @@
 import {
   createLeadSchema,
+  createPlanSchema,
   createTeamMemberSchema,
   updateLeadSchema,
+  updatePlanSchema,
   updateSiteSettingsSchema,
   updateTeamMemberSchema,
   type AdminDashboardStats,
   type CreateLeadInput,
+  type CreatePlanInput,
   type CreateTeamMemberInput,
   type Lead,
+  type LeadActivity,
+  type ListLeadsQuery,
+  type Plan,
   type SiteSettings,
   type TeamMember,
   type UpdateLeadInput,
+  type UpdatePlanInput,
   type UpdateSiteSettingsInput,
   type UpdateTeamMemberInput
 } from '@razconms/shared'
@@ -43,6 +50,13 @@ export const useAdminApi = () => {
   }
 
   const request = async <T>(path: string, init: RequestInit = {}): Promise<T> => {
+    if (!baseUrl.value) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: 'API base não configurada. Defina NUXT_PUBLIC_API_BASE.'
+      })
+    }
+
     const headers = new Headers(init.headers)
     if (!(init.body instanceof FormData) && !headers.has('Content-Type') && init.body) {
       headers.set('Content-Type', 'application/json')
@@ -129,7 +143,15 @@ export const useAdminApi = () => {
 
   const getDashboard = () => request<AdminDashboardStats>('/admin/dashboard')
 
-  const listLeads = () => request<Lead[]>('/admin/leads')
+  const listLeads = (query?: Partial<ListLeadsQuery>) => {
+    const params = new URLSearchParams()
+    if (query?.status) params.set('status', query.status)
+    if (query?.channel) params.set('channel', query.channel)
+    if (query?.q) params.set('q', query.q)
+    if (query?.limit) params.set('limit', String(query.limit))
+    const qs = params.toString()
+    return request<Lead[]>(`/admin/leads${qs ? `?${qs}` : ''}`)
+  }
   const createLead = (input: CreateLeadInput) => {
     const parsed = createLeadSchema.safeParse(input)
     if (!parsed.success) {
@@ -152,6 +174,8 @@ export const useAdminApi = () => {
   }
   const removeLead = (id: string) =>
     request<undefined>(`/admin/leads/${id}`, { method: 'DELETE' })
+  const listLeadActivities = (id: string) =>
+    request<LeadActivity[]>(`/admin/leads/${id}/activities`)
 
   const getSettings = () => request<SiteSettings>('/admin/settings')
   const updateSettings = (input: UpdateSiteSettingsInput) => {
@@ -189,10 +213,40 @@ export const useAdminApi = () => {
   const removeTeamMember = (id: string) =>
     request<undefined>(`/admin/team/${id}`, { method: 'DELETE' })
 
+  const listPlans = () => request<Plan[]>('/admin/plans')
+  const createPlan = (input: CreatePlanInput) => {
+    const parsed = createPlanSchema.safeParse(input)
+    if (!parsed.success) {
+      throw createError({ statusCode: 400, statusMessage: 'Plano inválido' })
+    }
+    return request<Plan>('/admin/plans', {
+      method: 'POST',
+      body: JSON.stringify(parsed.data)
+    })
+  }
+  const updatePlan = (id: string, input: UpdatePlanInput) => {
+    const parsed = updatePlanSchema.safeParse(input)
+    if (!parsed.success) {
+      throw createError({ statusCode: 400, statusMessage: 'Plano inválido' })
+    }
+    return request<Plan>(`/admin/plans/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(parsed.data)
+    })
+  }
+  const removePlan = (id: string) =>
+    request<undefined>(`/admin/plans/${id}`, { method: 'DELETE' })
+
   const uploadImage = async (
     file: File,
     folder = 'team'
   ): Promise<{ url: string; path: string; bucket: string }> => {
+    if (file.size > 5 * 1024 * 1024) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: 'Arquivo muito grande. Máximo 5 MB.'
+      })
+    }
     const body = new FormData()
     body.append('file', file)
     body.append('folder', folder)
@@ -212,12 +266,17 @@ export const useAdminApi = () => {
     createLead,
     updateLead,
     removeLead,
+    listLeadActivities,
     getSettings,
     updateSettings,
     listTeam,
     createTeamMember,
     updateTeamMember,
     removeTeamMember,
+    listPlans,
+    createPlan,
+    updatePlan,
+    removePlan,
     uploadImage
   }
 }

@@ -1,14 +1,13 @@
 import type { CreateContactInput } from '@razconms/shared'
 import { Effect } from 'effect'
 import { ContactRepository } from '../contact-repository.context.js'
-import { LeadRepository } from '../lead-repository.context.js'
+import { createLead } from './lead.use-case.js'
 
 export const createContact = (input: CreateContactInput) =>
   Effect.gen(function* () {
     const contacts = yield* ContactRepository
-    const leads = yield* LeadRepository
     const contact = yield* contacts.create(input)
-    yield* leads.create({
+    yield* createLead({
       fullName: input.fullName,
       email: input.email,
       phone: input.phone ?? null,

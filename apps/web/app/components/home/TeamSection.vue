@@ -1,65 +1,14 @@
 <script setup lang="ts">
-import { UserRound } from 'lucide-vue-next'
+import { Facebook, Instagram, Linkedin } from 'lucide-vue-next'
 import type { TeamMember } from '@razconms/shared'
 
-type PublicTeamMember = {
-  name: string
-  role: string
-  initials: string
-  tone: string
-  image?: string
-}
-
-const fallbackTeam: PublicTeamMember[] = [
-  {
-    name: 'Rita',
-    role: 'Diretora',
-    initials: 'RT',
-    tone: 'bg-brand-navy-100',
-    image: '/img/team/rita.jpeg'
-  },
-  {
-    name: 'Tiago',
-    role: 'Especialista contábil',
-    initials: 'TA',
-    tone: 'bg-brand-gold-100',
-    image: '/img/team/tiago.jpeg'
-  },
-  {
-    name: 'Debora',
-    role: 'Especialista fiscal',
-    initials: 'DE',
-    tone: 'bg-brand-gold-100',
-    image: '/img/team/debora.jpeg'
-  },
-  {
-    name: 'Caroline',
-    role: 'Departamento pessoal',
-    initials: 'CN',
-    tone: 'bg-brand-navy-50',
-    image: undefined
-  }
-]
-
-const tones = ['bg-brand-navy-100', 'bg-brand-gold-100', 'bg-brand-navy-50']
-
-const mapMember = (member: TeamMember, index: number): PublicTeamMember => ({
-  name: member.name,
-  role: member.role,
-  initials: member.initials,
-  tone: tones[index % tones.length] ?? 'bg-brand-navy-50',
-  image: member.imageUrl || undefined
-})
-
-const { data: team } = await useAsyncData('public-team', async () => {
+const { data: team, status } = await useAsyncData('public-team', async () => {
+  const base = resolveApiBase()
+  if (!base) return [] as TeamMember[]
   try {
-    const base = resolveApiBase()
-    if (!base) return fallbackTeam
-    const members = await $fetch<TeamMember[]>(`${base}/team`)
-    if (!members.length) return fallbackTeam
-    return members.map(mapMember)
+    return await $fetch<TeamMember[]>(`${base}/team`)
   } catch {
-    return fallbackTeam
+    return [] as TeamMember[]
   }
 })
 </script>
@@ -81,48 +30,84 @@ const { data: team } = await useAsyncData('public-team', async () => {
         </p>
       </div>
 
-      <div class="mt-14 grid gap-6 md:grid-cols-3">
+      <p v-if="status === 'pending'" class="mt-14 text-sm text-text-muted">
+        Carregando equipe…
+      </p>
+      <p
+        v-else-if="!team?.length"
+        class="mt-14 rounded-[var(--radius-lg)] border border-border bg-surface px-5 py-10 text-center text-sm text-text-muted"
+      >
+        A equipe será publicada em breve.
+      </p>
+
+      <div v-else class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <article
-          v-for="(person, index) in team || fallbackTeam"
-          :key="person.name"
+          v-for="(person, index) in team"
+          :key="person.id"
           class="marketing-card overflow-hidden"
           data-reveal
           :data-reveal-delay="String(index * 80)"
         >
-          <div class="relative h-72 overflow-hidden" :class="person.tone">
-            <div
-              class="absolute left-5 top-5 z-10 rounded-full bg-white/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-navy-900 backdrop-blur"
-            >
-              Equipe Razcon
-            </div>
-            <template v-if="person.image">
-              <img
-                :src="person.image"
-                :alt="`Foto de ${person.name}`"
-                class="absolute inset-0 size-full object-cover object-center transition duration-500 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-              />
-              <div
-                class="absolute inset-0 bg-gradient-to-t from-brand-navy-950/55 via-transparent to-transparent"
-                aria-hidden="true"
-              />
-            </template>
-            <div
-              v-else
-              class="absolute inset-x-0 bottom-0 mx-auto grid size-44 place-items-center rounded-t-full bg-white/75 text-brand-navy-900"
-            >
-              <UserRound class="size-24 stroke-[1.2] opacity-70" aria-hidden="true" />
+          <div class="relative aspect-[3/4] overflow-hidden bg-brand-navy-50">
+            <img
+              v-if="person.imageUrl"
+              :src="person.imageUrl"
+              :alt="`Foto de ${person.name}`"
+              class="size-full object-cover object-[center_18%]"
+              loading="lazy"
+              decoding="async"
+            />
+            <div v-else class="grid size-full place-items-center text-brand-navy-900">
               <span
-                class="absolute bottom-5 rounded-full bg-brand-navy-900 px-3 py-1 text-xs font-bold text-white"
+                class="grid size-20 place-items-center rounded-full bg-brand-navy-900 text-sm font-semibold text-white"
+                :aria-label="`Iniciais de ${person.name}`"
               >
                 {{ person.initials }}
               </span>
             </div>
           </div>
-          <div class="p-6">
-            <h3 class="text-lg font-semibold text-brand-navy-900">{{ person.name }}</h3>
+          <div class="border-t border-border p-5">
+            <h3 class="text-base font-semibold text-brand-navy-900">{{ person.name }}</h3>
             <p class="mt-1 text-sm text-text-muted">{{ person.role }}</p>
+            <div
+              v-if="
+                socialHref(person.instagramUrl) ||
+                socialHref(person.linkedinUrl) ||
+                socialHref(person.facebookUrl)
+              "
+              class="mt-3 flex gap-2"
+            >
+              <a
+                v-if="socialHref(person.instagramUrl)"
+                :href="socialHref(person.instagramUrl) || undefined"
+                class="focus-ring rounded-[var(--radius-sm)] p-1 text-brand-navy-900 hover:text-brand-navy-700"
+                target="_blank"
+                rel="noopener noreferrer"
+                :aria-label="`Instagram de ${person.name}`"
+              >
+                <Instagram class="size-4" aria-hidden="true" />
+              </a>
+              <a
+                v-if="socialHref(person.linkedinUrl)"
+                :href="socialHref(person.linkedinUrl) || undefined"
+                class="focus-ring rounded-[var(--radius-sm)] p-1 text-brand-navy-900 hover:text-brand-navy-700"
+                target="_blank"
+                rel="noopener noreferrer"
+                :aria-label="`LinkedIn de ${person.name}`"
+              >
+                <Linkedin class="size-4" aria-hidden="true" />
+              </a>
+              <a
+                v-if="socialHref(person.facebookUrl)"
+                :href="socialHref(person.facebookUrl) || undefined"
+                class="focus-ring rounded-[var(--radius-sm)] p-1 text-brand-navy-900 hover:text-brand-navy-700"
+                target="_blank"
+                rel="noopener noreferrer"
+                :aria-label="`Facebook de ${person.name}`"
+              >
+                <Facebook class="size-4" aria-hidden="true" />
+              </a>
+            </div>
           </div>
         </article>
       </div>

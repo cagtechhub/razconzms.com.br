@@ -1,20 +1,12 @@
 import { useSchemaOrg } from '@unhead/schema-org/vue'
 
-function noIndexEnabled(value: boolean | string | undefined) {
-  return value === true || value === 'true' || value === '1'
-}
-
 export function useSiteSeoHead(overrides?: { title?: string; description?: string }) {
-  const config = useRuntimeConfig()
+  const settings = useSiteSettings()
   const canonicalUrl = useCanonicalUrl()
 
-  const siteName = computed(() =>
-    String(config.public.siteName || 'Razcon Soluções Contábeis').trim()
-  )
-  const locality = computed(() => String(config.public.seoLocality || '').trim())
-  const noIndex = computed(() =>
-    noIndexEnabled(config.public.noIndex as boolean | string | undefined)
-  )
+  const siteName = computed(() => settings.siteName.value.trim())
+  const locality = computed(() => settings.seoLocality.value.trim())
+  const noIndex = computed(() => settings.noIndex.value)
   const pageTitle = computed(
     () => overrides?.title || 'Contabilidade com clareza e confiança'
   )
@@ -28,7 +20,7 @@ export function useSiteSeoHead(overrides?: { title?: string; description?: strin
     const localText = locality.value ? ` Atendimento em ${locality.value}.` : ''
     return `Escritório de contabilidade com foco em obrigações fiscais, folha, lançamentos e orientação para empresas.${localText}`
   })
-  const ogImage = computed(() => String(config.public.defaultOgImageUrl || '').trim())
+  const ogImage = computed(() => settings.defaultOgImageUrl.value.trim())
 
   useSeoMeta({
     title: pageTitle,
@@ -50,13 +42,13 @@ export function useSiteSeoHead(overrides?: { title?: string; description?: strin
 
   useSchemaOrg(() => {
     const phone = String(
-      config.public.businessPhone || config.public.whatsappNumber || ''
+      settings.businessPhone.value || settings.whatsappNumber.value || ''
     ).replace(/\D/g, '')
     const tel = phone ? `+${phone}` : ''
-    const contactEmail = String(config.public.contactEmail || '').trim()
-    const instagram = String(config.public.instagramUrl || '').trim()
-    const facebook = String(config.public.facebookUrl || '').trim()
-    const linkedin = String(config.public.linkedinUrl || '').trim()
+    const contactEmail = settings.contactEmail.value.trim()
+    const instagram = settings.instagramUrl.value.trim()
+    const facebook = settings.facebookUrl.value.trim()
+    const linkedin = settings.linkedinUrl.value.trim()
     const sameAs = [instagram, facebook, linkedin].filter(Boolean)
 
     const organization: Record<string, unknown> = {

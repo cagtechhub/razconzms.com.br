@@ -34,7 +34,9 @@ Usar como template em projetos futuros Up2tech semelhantes:
 
 - Não introduzir Jest, Mocha, Biome ou segundo formatador sem decisão do time.
 - Testes: `*.test.ts` / `*.spec.ts`; excluir do emit via `tsconfig.build.json`.
-- Ver também `.cursor/rules/tooling-monorepo.mdc` e agentes em `.cursor/agents/`.
+- Rules deste repo: `.cursor/rules/` (específicas da Razcon).
+- Rules globais Up2tech: `~/.cursor/rules/` (`docker-traefik-supabase`, `tooling-monorepo`, `fullstack-vue-nuxt`).
+- Deploy: skill `docker-traefik-supabase-deploy` + `~/.cursor/skills/docker-traefik-supabase-deploy/templates/`.
 
 ## Design system
 
@@ -73,11 +75,12 @@ Ver `STYLE_GUIDE.md` na raiz para exemplos de uso por contexto (dashboard, tabel
 
 ## Deploy (Docker + Traefik + Supabase)
 
-Produção na OS: `docker-compose.yml` + Traefik (rede `web`, nunca `host`) + Postgres do Supabase. Sem serviço `db` e sem `ports:` no host. Ver README seção **Docker + Traefik**.
+Produção na OS: `docker-compose.yml` + Traefik (rede `web`, nunca `host`) + Postgres do Supabase. Sem serviço `db` e sem `ports:` no host. Ver README, `~/.cursor/rules/docker-traefik-supabase.mdc` e a skill `docker-traefik-supabase-deploy`.
 
-- SSR: `NUXT_API_BASE=http://razconms-backend:3001`
+- SSR: `NUXT_API_BASE=http://razconms-backend:3001` (`container_name`; não `http://backend:3001`)
 - Browser/CSP: `NUXT_PUBLIC_API_BASE=https://api.…` (build args no Dockerfile da web)
-- Prisma: gerar client e copiar `output` para `dist` (wasm/runtime)
+- Portas 3000/3001 são internas — OK repetir em outros apps na mesma VPS; não publicar no host
+- Prisma 7: generate + `tsc` + `cp -a` do output (sem `rm -rf` do JS compilado)
 - Vue: pin único via `resolutions` (Yarn 1)
 - Web Docker (padrão Gutierres): runtime com `node_modules` da raiz; só substituir `vue`/`@vue` incompletos no `.output`. Não copiar deps uma a uma.
 

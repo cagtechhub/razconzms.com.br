@@ -14,14 +14,10 @@ const stats = [
   <section class="relative z-10 -mt-8 pb-4 sm:-mt-12">
     <div class="container-page" data-reveal>
       <div
-        class="rounded-[1.5rem] border border-border bg-surface px-6 py-8 shadow-[0_24px_60px_-28px_rgba(15,20,36,0.35)] sm:px-10 sm:py-10"
+        class="rounded-[var(--radius-xl)] border border-border bg-surface px-6 py-8 shadow-sm sm:px-10 sm:py-10"
       >
         <div class="grid gap-8 sm:grid-cols-3 sm:gap-6">
-          <div
-            v-for="stat in stats"
-            :key="stat.label"
-            class="text-center sm:text-left"
-          >
+          <div v-for="stat in stats" :key="stat.label" class="text-center sm:text-left">
             <p class="stat-number">{{ stat.value }}</p>
             <p class="mt-2 text-sm leading-relaxed text-text-muted">{{ stat.label }}</p>
           </div>

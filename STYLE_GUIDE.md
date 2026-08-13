@@ -76,7 +76,7 @@ bg-surface            → branco
 bg-surface-muted      → neutral-50
 border-border         → neutral-200
 text-text             → brand-navy-950
-text-text-muted       → neutral-600
+text-text-muted       → neutral-700
 ```
 
 Cores de feedback (sucesso/alerta/erro) **não** vieram da logo — são valores padrão de mercado escolhidos para contraste e acessibilidade em contexto financeiro/contábil:
@@ -85,15 +85,18 @@ Cores de feedback (sucesso/alerta/erro) **não** vieram da logo — são valores
 - `warning`: `#b7791f` (âmbar — usado em "pendente", "vencendo")
 - `danger`: `#b3261e` (vermelho — usado em "vencido", "erro")
 
-## 4. Uso recomendado por contexto (contabilidade/fintech)
+## 4. Uso recomendado por contexto (escritório contemporâneo)
 
-- **Header/Sidebar**: `bg-brand-navy-900`, texto branco, logo em `brand-gold-500`.
-- **Botões primários** (ex: "Enviar documento", "Gerar relatório"): `bg-brand-navy-900 hover:bg-brand-navy-800 text-white`.
-- **Botões/badges de destaque** (ex: "Plano Premium", selo "Contábeis"): `bg-brand-gold-500 text-brand-navy-950`.
-- **Cards de dashboard** (KPIs, saldo, impostos a pagar): fundo `bg-surface` (branco), borda `border-neutral-200`, valores em `text-brand-navy-900`.
-- **Tabelas** (lançamentos, notas fiscais): linhas zebradas com `bg-surface-muted`, cabeçalho `bg-neutral-100 text-neutral-700`.
-- **Status fiscal**: usar `success`/`warning`/`danger` apenas para status, nunca para elementos decorativos — mantém leitura rápida em telas densas de dados.
-- **Evitar**: usar dourado em grandes áreas de fundo (compete com o navy e cansa a leitura em telas longas de extrato/relatório).
+Proporção visual: **~70% navy + branco**, **~20% neutro**, **~10% gold**.
+
+- **Header do site**: `bg-surface`, borda `border-border`, CTA `btn-primary` (navy).
+- **Hero institucional**: navy 950, sem glow/blur dourado. Gold **somente** no CTA principal (`btn-pill-accent` / `btn-accent`).
+- **Eyebrow em fundo claro**: `eyebrow` (gold-700). Em fundo escuro: `eyebrow-on-dark` (branco/70) — não competir com o CTA.
+- **Botões primários do portal** (enviar documento, login): `bg-brand-navy-900`. Gold no portal só se houver um único destaque.
+- **Cards / tabelas**: `bg-surface`, borda `border-border`, valores `text-brand-navy-900` + `tabular-nums`.
+- **Status fiscal**: `success` / `warning` / `danger` apenas para status — nunca decorativo.
+- **Time**: recorte uniforme (`aspect-[3/4]`, `object-cover`), fundo `brand-navy-50`, sem cards dourados.
+- **Evitar**: dourado em grandes áreas, `blur-3xl`, sombras “luxo”, múltiplos papéis de gold na mesma tela.
 
 ## 5. Tipografia
 

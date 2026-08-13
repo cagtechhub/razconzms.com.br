@@ -1,6 +1,8 @@
 import { Effect, Layer } from 'effect'
 import { assert, describe, it } from '@effect/vitest'
+import type { LeadActivity } from '@razconms/shared'
 import { ContactRepository } from '../contact-repository.context.js'
+import { LeadActivityRepository } from '../lead-activity-repository.context.js'
 import { LeadRepository } from '../lead-repository.context.js'
 import { createContact } from './create-contact.use-case.js'
 
@@ -43,12 +45,25 @@ describe('createContact', () => {
         remove: () => Effect.void
       })
 
+      const activitiesLayer = Layer.succeed(LeadActivityRepository, {
+        listByLeadId: () => Effect.succeed([]),
+        append: (input) =>
+          Effect.succeed({
+            id: 'act-1',
+            leadId: input.leadId,
+            type: input.type,
+            message: input.message,
+            meta: input.meta ?? null,
+            createdAt: new Date('2026-08-12T12:00:00.000Z')
+          } satisfies LeadActivity)
+      })
+
       const result = yield* createContact({
         fullName: 'Maria Silva',
         email: 'maria@exemplo.com',
         phone: '5511999999999',
         message: 'Quero um plano'
-      }).pipe(Effect.provide(Layer.mergeAll(contactsLayer, leadsLayer)))
+      }).pipe(Effect.provide(Layer.mergeAll(contactsLayer, leadsLayer, activitiesLayer)))
 
       assert.strictEqual(result.id, 'contact-1')
       assert.strictEqual(createdLeads.length, 1)

@@ -1,17 +1,17 @@
 export function useWhatsapp(customMessage?: string) {
-  const config = useRuntimeConfig()
+  const settings = useSiteSettings()
 
-  const whatsappHref = computed(() => {
-    const digits = String(config.public.whatsappNumber || '').replace(/\D/g, '')
-    const message = encodeURIComponent(
-      customMessage ||
-        String(
-          config.public.whatsappMessage ||
-            'Olá! Gostaria de saber mais sobre os serviços contábeis da Razcon.'
-        )
+  const buildHref = (message?: string) => {
+    const digits = settings.whatsappNumber.value.replace(/\D/g, '')
+    const text = encodeURIComponent(
+      message ||
+        settings.whatsappMessage.value ||
+        'Olá! Gostaria de saber mais sobre os serviços contábeis da Razcon.'
     )
-    return digits ? `https://wa.me/${digits}?text=${message}` : '#contato'
-  })
+    return digits ? `https://wa.me/${digits}?text=${text}` : '#contato'
+  }
 
-  return { whatsappHref }
+  const whatsappHref = computed(() => buildHref(customMessage))
+
+  return { whatsappHref, buildHref }
 }

@@ -27,6 +27,13 @@ enum LeadStatus {
   @@schema("razconms")
 }
 
+enum LeadActivityType {
+  CREATED
+  STATUS_CHANGED
+  NOTE_ADDED
+  @@schema("razconms")
+}
+
 model Contact {
   id        String   @id @default(cuid())
   fullName  String   @map("full_name")
@@ -52,13 +59,28 @@ model Lead {
   contactId String?     @map("contact_id")
   createdAt DateTime    @default(now()) @map("created_at")
   updatedAt DateTime    @updatedAt @map("updated_at")
-  contact   Contact?    @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  contact    Contact?       @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  activities LeadActivity[]
 
   @@index([channel])
   @@index([status])
   @@index([email])
   @@index([createdAt])
   @@map("leads")
+  @@schema("razconms")
+}
+
+model LeadActivity {
+  id        String           @id @default(cuid())
+  leadId    String           @map("lead_id")
+  type      LeadActivityType
+  message   String
+  meta      Json?
+  createdAt DateTime         @default(now()) @map("created_at")
+  lead      Lead             @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, createdAt])
+  @@map("lead_activities")
   @@schema("razconms")
 }
 
@@ -87,19 +109,42 @@ model SiteSettings {
 }
 
 model TeamMember {
-  id          String   @id @default(cuid())
-  name        String
-  role        String
-  initials    String
-  imageUrl    String?  @map("image_url")
-  storagePath String?  @map("storage_path")
-  sortOrder   Int      @default(0) @map("sort_order")
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  name         String
+  role         String
+  initials     String
+  imageUrl     String?  @map("image_url")
+  storagePath  String?  @map("storage_path")
+  instagramUrl String?  @map("instagram_url")
+  linkedinUrl  String?  @map("linkedin_url")
+  facebookUrl  String?  @map("facebook_url")
+  sortOrder    Int      @default(0) @map("sort_order")
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   @@index([active])
   @@index([sortOrder])
   @@map("team_members")
+  @@schema("razconms")
+}
+
+model Plan {
+  id                 String   @id @default(cuid())
+  name               String
+  description        String
+  features           String[]
+  featured           Boolean  @default(false)
+  showPrice          Boolean  @default(true) @map("show_price")
+  priceOriginalCents Int?     @map("price_original_cents")
+  pricePromoCents    Int?     @map("price_promo_cents")
+  sortOrder          Int      @default(0) @map("sort_order")
+  active             Boolean  @default(true)
+  ctaLabel           String?  @map("cta_label")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  @@index([active, sortOrder])
+  @@map("plans")
   @@schema("razconms")
 }

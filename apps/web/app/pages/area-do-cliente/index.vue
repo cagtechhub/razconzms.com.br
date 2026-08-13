@@ -76,98 +76,88 @@ function togglePasswordVisibility() {
 </script>
 
 <template>
-  <div class="bg-brand-navy-50">
-    <section class="relative overflow-hidden bg-brand-navy-950 text-white mb-[50px]">
-      <div
-        class="pointer-events-none absolute -right-32 top-0 size-96 rounded-full bg-brand-gold-500/10 blur-3xl"
-      />
-      <div class="container-page relative py-10 sm:py-14">
+  <div class="min-h-[calc(100dvh-4.25rem)] bg-surface">
+    <header class="border-b border-brand-navy-900 bg-brand-navy-900 text-white">
+      <div class="container-page flex h-14 items-center justify-between sm:h-16">
         <NuxtLink
           to="/"
-          class="focus-ring inline-flex items-center gap-2 rounded-[var(--radius-sm)] text-sm text-white/70 transition hover:text-white"
+          class="focus-ring inline-flex items-center gap-2 rounded-[var(--radius-sm)] text-sm text-white/75 transition hover:text-white"
         >
           <ArrowLeft class="size-4" aria-hidden="true" />
           Voltar para o site
         </NuxtLink>
-        <div class="mt-12 max-w-3xl">
-          <p class="eyebrow text-brand-gold-300">Portal Razcon</p>
-          <h1 class="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">
-            A contabilidade da sua empresa, sempre por perto.
-          </h1>
-          <p class="mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
-            Um espaço simples e seguro para acompanhar sua rotina contábil sem perder o
-            contato com quem entende do seu negócio.
-          </p>
-        </div>
+        <p class="text-sm font-medium text-white/80">Portal do cliente</p>
       </div>
-    </section>
+    </header>
 
-    <section class="container-page grid gap-8 py-12 md:grid-cols-2 md:items-start">
-      <aside class="rounded-[var(--radius-xl)] bg-brand-navy-900 p-6 text-white sm:p-8">
+    <section
+      class="container-page grid gap-8 py-10 md:grid-cols-2 md:items-start md:py-14"
+    >
+      <aside
+        class="rounded-[var(--radius-lg)] border border-border bg-surface p-6 sm:p-8"
+      >
         <div class="flex items-center gap-3">
-          <span
-            class="grid size-11 place-items-center rounded-[var(--radius-md)] bg-brand-gold-500 text-brand-navy-950"
-          >
+          <span class="portal-icon">
             <Building2 class="size-5" aria-hidden="true" />
           </span>
           <div>
-            <p class="font-semibold">Portal Razcon</p>
-            <p class="text-xs text-white/55">Visão geral da sua empresa</p>
+            <p class="font-semibold text-brand-navy-900">Portal Razcon</p>
+            <p class="text-xs text-text-muted">Visão geral da sua empresa</p>
           </div>
         </div>
 
         <div
-          class="mt-8 rounded-[var(--radius-lg)] border border-white/10 bg-white/5 p-4"
+          class="mt-8 rounded-[var(--radius-md)] border border-border bg-surface-muted p-4"
         >
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-3">
             <div>
-              <p class="text-xs text-white/55">Próxima obrigação</p>
-              <p class="mt-1 font-semibold">DAS — Simples Nacional</p>
+              <p class="text-xs text-text-muted">Próxima obrigação</p>
+              <p class="mt-1 font-semibold text-brand-navy-900">DAS — Simples Nacional</p>
             </div>
-            <span
-              class="rounded-full bg-brand-gold-500/15 px-2.5 py-1 text-[10px] font-semibold text-brand-gold-300"
-              >Em breve</span
-            >
+            <span class="portal-badge bg-warning/10 text-warning">Em breve</span>
           </div>
-          <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-white/10">
-            <div class="h-full w-2/3 rounded-full bg-brand-gold-500" />
+          <div class="mt-5 h-1.5 overflow-hidden rounded-full bg-brand-navy-100">
+            <div class="h-full w-2/3 rounded-full bg-brand-navy-900" />
           </div>
-          <p class="mt-2 text-right text-xs text-white/50">Vencimento em 8 dias</p>
+          <p class="mt-2 text-right text-xs tabular-nums text-text-muted">
+            Vencimento em 8 dias
+          </p>
         </div>
 
         <ul class="mt-8 space-y-5">
           <li class="flex gap-3">
-            <span
-              class="grid size-8 shrink-0 place-items-center rounded-full bg-white/10 text-brand-gold-300"
-              ><FileText class="size-4" aria-hidden="true"
-            /></span>
+            <span class="portal-icon-sm">
+              <FileText class="size-4" aria-hidden="true" />
+            </span>
             <div>
-              <p class="text-sm font-semibold">Documentos organizados</p>
-              <p class="mt-1 text-xs leading-relaxed text-white/55">
+              <p class="text-sm font-semibold text-brand-navy-900">
+                Documentos organizados
+              </p>
+              <p class="mt-1 text-xs leading-relaxed text-text-muted">
                 Relatórios, guias e arquivos em um só lugar.
               </p>
             </div>
           </li>
           <li class="flex gap-3">
-            <span
-              class="grid size-8 shrink-0 place-items-center rounded-full bg-white/10 text-brand-gold-300"
-              ><CalendarCheck2 class="size-4" aria-hidden="true"
-            /></span>
+            <span class="portal-icon-sm">
+              <CalendarCheck2 class="size-4" aria-hidden="true" />
+            </span>
             <div>
-              <p class="text-sm font-semibold">Calendário fiscal</p>
-              <p class="mt-1 text-xs leading-relaxed text-white/55">
+              <p class="text-sm font-semibold text-brand-navy-900">Calendário fiscal</p>
+              <p class="mt-1 text-xs leading-relaxed text-text-muted">
                 Acompanhe entregas, prazos e próximas obrigações.
               </p>
             </div>
           </li>
           <li class="flex gap-3">
-            <span
-              class="grid size-8 shrink-0 place-items-center rounded-full bg-white/10 text-brand-gold-300"
-              ><MessageCircle class="size-4" aria-hidden="true"
-            /></span>
+            <span class="portal-icon-sm">
+              <MessageCircle class="size-4" aria-hidden="true" />
+            </span>
             <div>
-              <p class="text-sm font-semibold">Fale com especialistas</p>
-              <p class="mt-1 text-xs leading-relaxed text-white/55">
+              <p class="text-sm font-semibold text-brand-navy-900">
+                Fale com especialistas
+              </p>
+              <p class="mt-1 text-xs leading-relaxed text-text-muted">
                 Tire dúvidas diretamente com o time Razcon.
               </p>
             </div>
@@ -175,15 +165,13 @@ function togglePasswordVisibility() {
         </ul>
       </aside>
 
-      <div
-        class="rounded-[var(--radius-xl)] border border-border bg-surface p-6 shadow-sm sm:p-8"
-      >
+      <div class="rounded-[var(--radius-lg)] border border-border bg-surface p-6 sm:p-8">
         <div class="flex items-start justify-between gap-4">
           <div>
             <p class="eyebrow">Área restrita</p>
-            <h2 class="mt-2 text-2xl font-semibold tracking-tight text-brand-navy-900">
+            <h1 class="mt-2 text-2xl font-semibold tracking-tight text-brand-navy-900">
               {{ formHeading }}
-            </h2>
+            </h1>
             <p class="mt-2 max-w-md text-sm leading-relaxed text-text-muted">
               {{ formDescription }}
             </p>
@@ -207,7 +195,7 @@ function togglePasswordVisibility() {
         <NuxtLink
           v-if="mode === 'login' && notice"
           to="/area-do-cliente/dashboard"
-          class="focus-ring mt-3 inline-flex items-center gap-2 rounded-[var(--radius-sm)] text-sm font-semibold text-brand-navy-900 hover:text-brand-gold-700"
+          class="portal-link mt-3"
         >
           Abrir dashboard demonstrativo
           <ArrowRight class="size-4" aria-hidden="true" />
@@ -309,7 +297,7 @@ function togglePasswordVisibility() {
               Lembrar acesso
             </label>
             <button
-              class="focus-ring rounded-[var(--radius-sm)] text-xs font-semibold text-brand-navy-900 hover:text-brand-gold-700"
+              class="focus-ring rounded-[var(--radius-sm)] text-xs font-semibold text-brand-navy-900 hover:text-brand-navy-700"
               type="button"
               @click="setMode('recovery')"
             >
@@ -327,7 +315,7 @@ function togglePasswordVisibility() {
           <template v-if="mode === 'login'">
             Ainda não é cliente?
             <button
-              class="focus-ring rounded-[var(--radius-sm)] font-semibold text-brand-navy-900 hover:text-brand-gold-700"
+              class="focus-ring rounded-[var(--radius-sm)] font-semibold text-brand-navy-900 hover:text-brand-navy-700"
               type="button"
               @click="setMode('signup')"
             >
@@ -336,7 +324,7 @@ function togglePasswordVisibility() {
           </template>
           <template v-else>
             <button
-              class="focus-ring inline-flex items-center gap-1 rounded-[var(--radius-sm)] font-semibold text-brand-navy-900 hover:text-brand-gold-700"
+              class="focus-ring inline-flex items-center gap-1 rounded-[var(--radius-sm)] font-semibold text-brand-navy-900 hover:text-brand-navy-700"
               type="button"
               @click="setMode('login')"
             >
@@ -361,17 +349,12 @@ function togglePasswordVisibility() {
       </div>
     </section>
 
-    <section class="border-t border-border bg-surface py-8">
+    <section class="border-t border-border bg-surface-muted py-8">
       <div
         class="container-page flex flex-col gap-2 text-center text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between sm:text-left"
       >
         <p>Precisa de ajuda? Fale com a equipe Razcon.</p>
-        <NuxtLink
-          to="/faq"
-          class="focus-ring rounded-[var(--radius-sm)] font-semibold text-brand-navy-900 hover:text-brand-gold-700"
-        >
-          Acessar perguntas frequentes
-        </NuxtLink>
+        <NuxtLink to="/faq" class="portal-link"> Acessar perguntas frequentes </NuxtLink>
       </div>
     </section>
   </div>

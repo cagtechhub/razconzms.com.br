@@ -4,10 +4,7 @@ const { contactEmail } = useSiteSettings()
 </script>
 
 <template>
-  <footer class="relative border-t border-brand-navy-800 bg-brand-navy-900 text-white">
-    <div
-      class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-gold-500 to-transparent"
-    />
+  <footer class="border-t border-brand-navy-800 bg-brand-navy-900 text-white">
     <div class="container-page py-12">
       <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.7fr_0.7fr]">
         <div>
@@ -19,7 +16,7 @@ const { contactEmail } = useSiteSettings()
         </div>
 
         <div class="text-sm">
-          <p class="font-semibold text-brand-gold-400">Navegação</p>
+          <p class="font-semibold text-white">Navegação</p>
           <div class="mt-3 space-y-2">
             <NuxtLink
               to="/#servicos"
@@ -45,7 +42,7 @@ const { contactEmail } = useSiteSettings()
         </div>
 
         <div class="text-sm">
-          <p class="font-semibold text-brand-gold-400">Contato</p>
+          <p class="font-semibold text-white">Contato</p>
           <a
             v-if="contactEmail"
             class="focus-ring mt-2 block rounded-[var(--radius-sm)] text-white/80 transition hover:text-white"

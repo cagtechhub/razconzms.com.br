@@ -36,11 +36,15 @@
   }
 
   .eyebrow {
-    @apply text-xs font-semibold uppercase tracking-[0.2em] text-brand-gold-700;
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold-700;
+  }
+
+  .eyebrow-on-dark {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-white/70;
   }
 
   .section-title {
-    @apply mt-3 text-3xl font-semibold tracking-tight text-brand-navy-900 sm:text-4xl;
+    @apply mt-3 text-3xl font-semibold tracking-tight text-brand-navy-900 sm:text-[2rem] sm:leading-tight;
   }
 
   .section-lead {
@@ -140,17 +144,17 @@
     @apply transition hover:bg-brand-navy-50/50;
   }
 
-  /* Marketing — home moderna */
+  /* Marketing — escritório contemporâneo (gold só no CTA) */
   .btn-pill-accent {
-    @apply inline-flex items-center justify-center rounded-full bg-brand-gold-500 px-6 py-3 text-sm font-semibold text-brand-navy-950 shadow-[0_10px_30px_-10px_rgba(171,151,84,0.65)] transition hover:bg-brand-gold-400 hover:shadow-[0_14px_34px_-10px_rgba(171,151,84,0.75)];
+    @apply inline-flex items-center justify-center rounded-[var(--radius-md)] bg-brand-gold-500 px-6 py-3 text-sm font-semibold text-brand-navy-950 transition hover:bg-brand-gold-400;
   }
 
   .btn-pill-outline {
-    @apply inline-flex items-center justify-center rounded-full border border-white/25 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-white/40 hover:bg-white/10;
+    @apply inline-flex items-center justify-center rounded-[var(--radius-md)] border border-white/30 bg-transparent px-6 py-3 text-sm font-semibold text-white transition hover:border-white/50 hover:bg-white/10;
   }
 
   .marketing-card {
-    @apply rounded-[1.25rem] border border-border/80 bg-surface shadow-[0_16px_48px_-24px_rgba(15,20,36,0.28)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_56px_-24px_rgba(15,20,36,0.35)];
+    @apply rounded-[var(--radius-lg)] border border-border bg-surface shadow-sm transition hover:border-brand-navy-200;
   }
 
   .marketing-icon {

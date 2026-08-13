@@ -81,7 +81,7 @@ const services = [
             >
               <component :is="service.icon" class="size-5" aria-hidden="true" />
             </span>
-            <span class="text-xs font-semibold tabular-nums text-brand-gold-600">{{
+            <span class="text-xs font-semibold tabular-nums text-text-muted">{{
               service.number
             }}</span>
           </div>
@@ -93,7 +93,7 @@ const services = [
           </p>
           <NuxtLink
             to="/#contato"
-            class="focus-ring mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-navy-900 transition hover:text-brand-gold-700"
+            class="focus-ring mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-navy-900 transition hover:text-brand-navy-700"
           >
             Saiba mais
             <ArrowRight class="size-3.5" aria-hidden="true" />

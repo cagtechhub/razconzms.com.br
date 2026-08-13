@@ -9,7 +9,9 @@ function envOrigin(value: string | undefined) {
   }
 }
 
-const publicApiOrigin = envOrigin(process.env.NUXT_PUBLIC_API_BASE)
+const publicApiBase =
+  process.env.NUXT_PUBLIC_API_BASE?.trim() || 'http://localhost:3001'
+const publicApiOrigin = envOrigin(publicApiBase)
 const publicSupabaseOrigin = envOrigin(process.env.NUXT_PUBLIC_SUPABASE_URL)
 
 export default defineNuxtConfig({
@@ -28,9 +30,9 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
-    apiBase: '',
+    apiBase: process.env.NUXT_API_BASE?.trim() || '',
     public: {
-      apiBase: '',
+      apiBase: publicApiBase,
       supabaseUrl: '',
       supabaseAnonKey: '',
       siteUrl: '',
@@ -94,16 +96,20 @@ export default defineNuxtConfig({
         'img-src': [
           "'self'",
           'data:',
+          'blob:',
+          'https:',
           'https://*.google-analytics.com',
           'https://*.facebook.net',
           'https://*.supabase.co'
         ],
         'connect-src': [
           "'self'",
+          publicApiOrigin,
+          'http://localhost:3001',
+          'http://127.0.0.1:3001',
           'https://*.google-analytics.com',
           'https://*.supabase.co',
           'wss://*.supabase.co',
-          ...(publicApiOrigin ? [publicApiOrigin] : []),
           ...(publicSupabaseOrigin ? [publicSupabaseOrigin] : [])
         ],
         'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],

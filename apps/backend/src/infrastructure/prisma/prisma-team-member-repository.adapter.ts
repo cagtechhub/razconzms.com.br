@@ -16,10 +16,19 @@ type TeamRecord = {
   initials: string
   imageUrl: string | null
   storagePath: string | null
+  instagramUrl: string | null
+  linkedinUrl: string | null
+  facebookUrl: string | null
   sortOrder: number
   active: boolean
   createdAt: Date
   updatedAt: Date
+}
+
+const emptyToNull = (value: string | null | undefined) => {
+  if (value === undefined) return undefined
+  const trimmed = value?.trim() ?? ''
+  return trimmed === '' ? null : trimmed
 }
 
 const mapMember = (record: TeamRecord): TeamMember =>
@@ -30,6 +39,9 @@ const mapMember = (record: TeamRecord): TeamMember =>
     initials: record.initials,
     imageUrl: record.imageUrl,
     storagePath: record.storagePath,
+    instagramUrl: record.instagramUrl,
+    linkedinUrl: record.linkedinUrl,
+    facebookUrl: record.facebookUrl,
     sortOrder: record.sortOrder,
     active: record.active,
     createdAt: record.createdAt,
@@ -63,8 +75,11 @@ export const makePrismaTeamMemberRepository = (
             name: input.name,
             role: input.role,
             initials: input.initials,
-            imageUrl: input.imageUrl ?? null,
-            storagePath: input.storagePath ?? null,
+            imageUrl: emptyToNull(input.imageUrl) ?? null,
+            storagePath: emptyToNull(input.storagePath) ?? null,
+            instagramUrl: emptyToNull(input.instagramUrl) ?? null,
+            linkedinUrl: emptyToNull(input.linkedinUrl) ?? null,
+            facebookUrl: emptyToNull(input.facebookUrl) ?? null,
             sortOrder: input.sortOrder ?? 0,
             active: input.active ?? true
           }
@@ -81,9 +96,20 @@ export const makePrismaTeamMemberRepository = (
             ...(input.name !== undefined ? { name: input.name } : {}),
             ...(input.role !== undefined ? { role: input.role } : {}),
             ...(input.initials !== undefined ? { initials: input.initials } : {}),
-            ...(input.imageUrl !== undefined ? { imageUrl: input.imageUrl } : {}),
+            ...(input.imageUrl !== undefined
+              ? { imageUrl: emptyToNull(input.imageUrl) ?? null }
+              : {}),
             ...(input.storagePath !== undefined
-              ? { storagePath: input.storagePath }
+              ? { storagePath: emptyToNull(input.storagePath) ?? null }
+              : {}),
+            ...(input.instagramUrl !== undefined
+              ? { instagramUrl: emptyToNull(input.instagramUrl) ?? null }
+              : {}),
+            ...(input.linkedinUrl !== undefined
+              ? { linkedinUrl: emptyToNull(input.linkedinUrl) ?? null }
+              : {}),
+            ...(input.facebookUrl !== undefined
+              ? { facebookUrl: emptyToNull(input.facebookUrl) ?? null }
               : {}),
             ...(input.sortOrder !== undefined ? { sortOrder: input.sortOrder } : {}),
             ...(input.active !== undefined ? { active: input.active } : {})

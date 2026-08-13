@@ -17,10 +17,7 @@ withDefaults(
       src="/img/logo.png"
       alt="Razcon Soluções Contábeis"
       class="w-auto object-contain"
-      :class="[
-        compact ? 'h-9' : 'h-16',
-        variant === 'footer' ? 'invert grayscale' : ''
-      ]"
+      :class="[compact ? 'h-9' : 'h-16', variant === 'footer' ? 'invert grayscale' : '']"
     />
   </NuxtLink>
 </template>

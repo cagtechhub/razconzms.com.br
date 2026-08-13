@@ -1,41 +1,21 @@
 <script setup lang="ts">
 import { ArrowRight, Check } from 'lucide-vue-next'
+import type { Plan } from '@razconms/shared'
 
-const { whatsappHref } = useWhatsapp()
+const { buildHref } = useWhatsapp()
 
-const plans = [
-  {
-    name: 'Essencial',
-    description: 'Para empresas que estão começando e precisam de uma base segura.',
-    price: 'A partir de R$ 399',
-    featured: false,
-    features: ['Contabilidade mensal', 'Obrigações fiscais', 'Atendimento por e-mail']
-  },
-  {
-    name: 'Gestão',
-    description: 'Mais acompanhamento para empresas em fase de crescimento.',
-    price: 'A partir de R$ 799',
-    featured: true,
-    features: [
-      'Tudo do Essencial',
-      'Folha de pagamento',
-      'Reunião de acompanhamento',
-      'Relatórios gerenciais'
-    ]
-  },
-  {
-    name: 'Sob medida',
-    description:
-      'Uma estrutura desenhada para a complexidade e os objetivos do seu negócio.',
-    price: 'Vamos conversar',
-    featured: false,
-    features: [
-      'Escopo personalizado',
-      'Consultoria estratégica',
-      'Canal direto com especialistas'
-    ]
+const { data: plans, status } = await useAsyncData('public-plans', async () => {
+  const base = resolveApiBase()
+  if (!base) return [] as Plan[]
+  try {
+    return await $fetch<Plan[]>(`${base}/plans`)
+  } catch {
+    return [] as Plan[]
   }
-]
+})
+
+const ctaLabel = (plan: Plan) => plan.ctaLabel?.trim() || 'Conversar sobre este plano'
+const planHref = (name: string) => buildHref(`Olá! Tenho interesse no plano ${name}.`)
 </script>
 
 <template>
@@ -50,14 +30,24 @@ const plans = [
         </p>
       </div>
 
-      <div class="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
+      <p v-if="status === 'pending'" class="mt-14 text-center text-sm text-text-muted">
+        Carregando planos…
+      </p>
+      <p
+        v-else-if="!plans?.length"
+        class="mt-14 rounded-[var(--radius-lg)] border border-border bg-surface-muted px-5 py-10 text-center text-sm text-text-muted"
+      >
+        Os planos serão publicados em breve.
+      </p>
+
+      <div v-else class="mt-14 grid items-stretch gap-6 lg:grid-cols-3">
         <article
           v-for="(plan, index) in plans"
-          :key="plan.name"
-          class="relative flex flex-col rounded-[1.5rem] border p-7 transition duration-300"
+          :key="plan.id"
+          class="relative flex flex-col rounded-[var(--radius-lg)] border p-7"
           :class="
             plan.featured
-              ? 'border-brand-navy-900 bg-brand-navy-900 text-white shadow-[0_28px_60px_-28px_rgba(15,20,36,0.55)] lg:-translate-y-4'
+              ? 'border-brand-navy-900 bg-brand-navy-900 text-white'
               : 'marketing-card border-border'
           "
           data-reveal
@@ -71,7 +61,7 @@ const plans = [
           </span>
           <p
             class="text-sm font-semibold"
-            :class="plan.featured ? 'text-brand-gold-300' : 'text-brand-gold-700'"
+            :class="plan.featured ? 'text-white/80' : 'text-brand-navy-900'"
           >
             {{ plan.name }}
           </p>
@@ -81,12 +71,37 @@ const plans = [
           >
             {{ plan.description }}
           </p>
-          <p
-            class="mt-7 text-2xl font-semibold"
-            :class="plan.featured ? 'text-white' : 'text-brand-navy-900'"
-          >
-            {{ plan.price }}
-          </p>
+          <div class="mt-7">
+            <template v-if="!plan.showPrice">
+              <p
+                class="text-2xl font-semibold"
+                :class="plan.featured ? 'text-white' : 'text-brand-navy-900'"
+              >
+                Vamos conversar
+              </p>
+            </template>
+            <template v-else>
+              <p
+                v-if="plan.priceOriginalCents != null && plan.pricePromoCents != null"
+                class="text-sm tabular-nums line-through"
+                :class="plan.featured ? 'text-white/50' : 'text-text-muted'"
+              >
+                {{ centsToBrl(plan.priceOriginalCents) }}
+              </p>
+              <p
+                class="text-2xl font-semibold tabular-nums"
+                :class="plan.featured ? 'text-white' : 'text-brand-navy-900'"
+              >
+                {{
+                  plan.pricePromoCents != null
+                    ? centsToBrl(plan.pricePromoCents)
+                    : plan.priceOriginalCents != null
+                      ? centsToBrl(plan.priceOriginalCents)
+                      : 'Vamos conversar'
+                }}
+              </p>
+            </template>
+          </div>
           <ul
             class="mt-7 flex-1 space-y-3 border-t pt-6"
             :class="plan.featured ? 'border-white/10' : 'border-border'"
@@ -99,20 +114,22 @@ const plans = [
             >
               <Check
                 class="size-4 shrink-0"
-                :class="plan.featured ? 'text-brand-gold-300' : 'text-brand-navy-600'"
+                :class="plan.featured ? 'text-white' : 'text-brand-navy-700'"
                 aria-hidden="true"
               />
               {{ feature }}
             </li>
           </ul>
           <a
-            :href="whatsappHref"
+            :href="planHref(plan.name)"
             class="focus-ring mt-8 w-full"
             :class="plan.featured ? 'btn-pill-accent' : 'btn-primary'"
-            :target="whatsappHref.startsWith('http') ? '_blank' : undefined"
-            :rel="whatsappHref.startsWith('http') ? 'noopener noreferrer' : undefined"
+            :target="planHref(plan.name).startsWith('http') ? '_blank' : undefined"
+            :rel="
+              planHref(plan.name).startsWith('http') ? 'noopener noreferrer' : undefined
+            "
           >
-            Conversar sobre este plano
+            {{ ctaLabel(plan) }}
             <ArrowRight class="ml-2 size-4" aria-hidden="true" />
           </a>
         </article>

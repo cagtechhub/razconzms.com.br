@@ -3,11 +3,11 @@ function normalizeOrigin(value: string) {
 }
 
 export function usePublicSiteOrigin() {
-  const config = useRuntimeConfig()
+  const { siteUrl } = useSiteSettings()
   const requestUrl = import.meta.server ? useRequestURL() : null
 
   return computed(() => {
-    const configured = normalizeOrigin(String(config.public.siteUrl || ''))
+    const configured = normalizeOrigin(siteUrl.value)
     if (configured) return configured
     if (requestUrl) return normalizeOrigin(requestUrl.origin)
     return window.location.origin.replace(/\/$/, '')

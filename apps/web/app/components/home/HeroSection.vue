@@ -14,28 +14,15 @@ const benefits = [
 <template>
   <section class="relative overflow-hidden bg-brand-navy-950 text-white">
     <div
-      class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(171,151,84,0.18),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(77,101,178,0.25),transparent_50%)]"
-      aria-hidden="true"
-    />
-    <div
-      class="pointer-events-none absolute -right-24 top-10 size-[28rem] rounded-full bg-brand-gold-500/10 blur-3xl animate-float"
-      aria-hidden="true"
-    />
-    <div
-      class="pointer-events-none absolute -bottom-28 -left-20 size-80 rounded-full bg-brand-navy-500/30 blur-3xl animate-float-delayed"
-      aria-hidden="true"
-    />
-
-    <div
-      class="container-page relative grid gap-12 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-16 lg:py-28"
+      class="container-page relative grid gap-12 py-14 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16 lg:py-20"
     >
       <div data-reveal>
         <h1
-          class="max-w-3xl text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-[3.5rem]"
+          class="max-w-3xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-[2.75rem] lg:leading-[1.15]"
         >
           Você cuida da sua empresa. A gente cuida da sua contabilidade.
         </h1>
-        <p class="mt-6 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
+        <p class="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
           Deixe a burocracia com a Razcon. Cuidamos da rotina fiscal, trabalhista e
           contábil para você empreender com tranquilidade.
         </p>
@@ -76,34 +63,20 @@ const benefits = [
 
       <div class="relative mx-auto w-full max-w-lg" data-reveal data-reveal-delay="120">
         <div
-          class="absolute -inset-3 rounded-[2rem] border border-brand-gold-400/20"
-          aria-hidden="true"
-        />
-        <div class="relative overflow-hidden rounded-[1.75rem] bg-brand-navy-900/40">
+          class="relative overflow-hidden rounded-[var(--radius-xl)] border border-white/10"
+        >
           <img
             src="/img/empresa/escritorio-1.jpeg"
-            alt="Especialista Razcon"
+            alt="Escritório da Razcon Soluções Contábeis"
             class="aspect-[4/5] w-full object-cover object-center sm:aspect-[5/6]"
             loading="eager"
             decoding="async"
           />
           <div
-            class="absolute inset-0 bg-gradient-to-t from-brand-navy-950/80 via-brand-navy-950/10 to-transparent"
+            class="absolute inset-0 bg-gradient-to-t from-brand-navy-950/70 via-transparent to-transparent"
             aria-hidden="true"
           />
         </div>
-
-        <!-- <div
-          class="absolute bottom-5 left-4 right-4 rounded-2xl border border-white/15 bg-white/95 p-4 text-brand-navy-950 shadow-2xl backdrop-blur sm:bottom-8 sm:left-8 sm:right-auto sm:max-w-[17rem] animate-float"
-        >
-          <p class="text-sm font-semibold text-brand-navy-900">Tiago</p>
-          <p class="mt-0.5 text-xs text-text-muted">
-            Especialista fiscal · Equipe Razcon
-          </p>
-          <p class="mt-3 text-xs leading-relaxed text-text-muted">
-            “Acompanho sua rotina de perto para que nenhum prazo passe despercebido.”
-          </p>
-        </div> -->
       </div>
     </div>
   </section>

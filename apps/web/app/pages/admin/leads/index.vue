@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import type { CreateLeadInput, Lead, LeadChannel, LeadStatus } from '@razconms/shared'
+import type {
+  CreateLeadInput,
+  Lead,
+  LeadActivity,
+  LeadChannel,
+  LeadStatus
+} from '@razconms/shared'
 
 definePageMeta({
   layout: 'admin',
@@ -13,10 +19,13 @@ useSiteSeoHead({
 
 const api = useAdminApi()
 const leads = ref<Lead[]>([])
+const activities = ref<LeadActivity[]>([])
 const error = ref('')
 const loading = ref(true)
-const creating = ref(false)
-const showForm = ref(false)
+const saving = ref(false)
+const loadingActivities = ref(false)
+const modalOpen = ref(false)
+const editing = ref<Lead | null>(null)
 
 const statuses: LeadStatus[] = ['NEW', 'CONTACTED', 'QUALIFIED', 'CONVERTED', 'LOST']
 const statusLabel: Record<LeadStatus, string> = {
@@ -34,6 +43,17 @@ const channelLabel: Record<LeadChannel, string> = {
   REFERRAL: 'Indicação',
   OTHER: 'Outro'
 }
+const activityLabel: Record<LeadActivity['type'], string> = {
+  CREATED: 'Criado',
+  STATUS_CHANGED: 'Status',
+  NOTE_ADDED: 'Nota'
+}
+
+const filters = reactive({
+  status: '' as '' | LeadStatus,
+  channel: '' as '' | LeadChannel,
+  q: ''
+})
 
 const form = reactive({
   fullName: '',
@@ -48,7 +68,12 @@ const load = async () => {
   loading.value = true
   error.value = ''
   try {
-    leads.value = await api.listLeads()
+    leads.value = await api.listLeads({
+      status: filters.status || undefined,
+      channel: filters.channel || undefined,
+      q: filters.q.trim() || undefined,
+      limit: 50
+    })
   } catch {
     error.value = 'Não foi possível carregar os leads.'
   } finally {
@@ -61,27 +86,10 @@ const formatDate = (value: Date | string) => {
   return date.toLocaleString('pt-BR', {
     day: '2-digit',
     month: 'short',
-    year: 'numeric'
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
   })
-}
-
-const onStatusChange = async (lead: Lead, status: LeadStatus) => {
-  try {
-    await api.updateLead(lead.id, { status })
-    await load()
-  } catch {
-    error.value = 'Não foi possível atualizar o status.'
-  }
-}
-
-const onDelete = async (lead: Lead) => {
-  if (!confirm(`Excluir lead de "${lead.fullName}"?`)) return
-  try {
-    await api.removeLead(lead.id)
-    await load()
-  } catch {
-    error.value = 'Não foi possível excluir o lead.'
-  }
 }
 
 const resetForm = () => {
@@ -93,8 +101,41 @@ const resetForm = () => {
   form.status = 'NEW'
 }
 
-const onCreate = async () => {
-  creating.value = true
+const openCreate = () => {
+  editing.value = null
+  activities.value = []
+  resetForm()
+  modalOpen.value = true
+}
+
+const openEdit = async (lead: Lead) => {
+  editing.value = lead
+  form.fullName = lead.fullName
+  form.email = lead.email || ''
+  form.phone = lead.phone || ''
+  form.notes = lead.notes || ''
+  form.channel = lead.channel
+  form.status = lead.status
+  modalOpen.value = true
+  loadingActivities.value = true
+  try {
+    activities.value = await api.listLeadActivities(lead.id)
+  } catch {
+    activities.value = []
+  } finally {
+    loadingActivities.value = false
+  }
+}
+
+const closeModal = () => {
+  modalOpen.value = false
+  editing.value = null
+  activities.value = []
+  resetForm()
+}
+
+const onSave = async () => {
+  saving.value = true
   error.value = ''
   try {
     const payload: CreateLeadInput = {
@@ -104,16 +145,30 @@ const onCreate = async () => {
       notes: form.notes || null,
       channel: form.channel,
       status: form.status,
-      contactId: null
+      contactId: editing.value?.contactId ?? null
     }
-    await api.createLead(payload)
-    showForm.value = false
-    resetForm()
+    if (editing.value) {
+      await api.updateLead(editing.value.id, payload)
+    } else {
+      await api.createLead(payload)
+    }
+    closeModal()
     await load()
   } catch {
-    error.value = 'Falha ao criar lead.'
+    error.value = editing.value ? 'Falha ao atualizar lead.' : 'Falha ao criar lead.'
   } finally {
-    creating.value = false
+    saving.value = false
+  }
+}
+
+const onDelete = async (lead: Lead) => {
+  if (!confirm(`Excluir lead de "${lead.fullName}"?`)) return
+  try {
+    await api.removeLead(lead.id)
+    if (editing.value?.id === lead.id) closeModal()
+    await load()
+  } catch {
+    error.value = 'Não foi possível excluir o lead.'
   }
 }
 
@@ -134,84 +189,56 @@ await load()
         <button type="button" class="btn-secondary focus-ring" @click="load">
           Atualizar
         </button>
-        <button
-          type="button"
-          class="btn-primary focus-ring"
-          @click="showForm = !showForm"
-        >
-          {{ showForm ? 'Cancelar' : 'Novo lead' }}
+        <button type="button" class="btn-primary focus-ring" @click="openCreate">
+          Novo lead
         </button>
       </div>
     </div>
 
-    <p v-if="error" class="mt-4 text-sm text-danger">{{ error }}</p>
-
     <form
-      v-if="showForm"
-      class="mt-6 grid gap-4 rounded-[var(--radius-lg)] border border-border bg-surface p-5 sm:grid-cols-2"
-      @submit.prevent="onCreate"
+      class="mt-6 grid gap-3 rounded-[var(--radius-lg)] border border-border bg-surface p-4 sm:grid-cols-4"
+      @submit.prevent="load"
     >
       <label class="text-sm font-medium text-brand-navy-900 sm:col-span-2">
-        Nome
+        Busca
         <input
-          v-model="form.fullName"
-          required
+          v-model="filters.q"
+          type="search"
+          placeholder="Nome, e-mail, telefone ou nota"
           class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
         />
       </label>
       <label class="text-sm font-medium text-brand-navy-900">
-        E-mail
-        <input
-          v-model="form.email"
-          type="email"
+        Status
+        <select
+          v-model="filters.status"
           class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
-        />
-      </label>
-      <label class="text-sm font-medium text-brand-navy-900">
-        Telefone
-        <input
-          v-model="form.phone"
-          class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
-        />
+        >
+          <option value="">Todos</option>
+          <option v-for="status in statuses" :key="status" :value="status">
+            {{ statusLabel[status] }}
+          </option>
+        </select>
       </label>
       <label class="text-sm font-medium text-brand-navy-900">
         Canal
         <select
-          v-model="form.channel"
+          v-model="filters.channel"
           class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
         >
+          <option value="">Todos</option>
           <option v-for="(label, value) in channelLabel" :key="value" :value="value">
             {{ label }}
           </option>
         </select>
       </label>
-      <label class="text-sm font-medium text-brand-navy-900">
-        Status
-        <select
-          v-model="form.status"
-          class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
-        >
-          <option v-for="(label, value) in statusLabel" :key="value" :value="value">
-            {{ label }}
-          </option>
-        </select>
-      </label>
-      <label class="text-sm font-medium text-brand-navy-900 sm:col-span-2">
-        Observações
-        <textarea
-          v-model="form.notes"
-          rows="3"
-          class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
-        />
-      </label>
-      <div class="sm:col-span-2">
-        <button type="submit" class="btn-primary focus-ring" :disabled="creating">
-          {{ creating ? 'Salvando…' : 'Criar lead' }}
-        </button>
+      <div class="sm:col-span-4">
+        <button type="submit" class="btn-secondary focus-ring">Filtrar</button>
       </div>
     </form>
 
-    <p v-if="loading" class="mt-4 text-sm text-text-muted">Carregando…</p>
+    <p v-if="error" class="mt-4 text-sm text-danger">{{ error }}</p>
+    <p v-else-if="loading" class="mt-4 text-sm text-text-muted">Carregando…</p>
 
     <div
       v-else
@@ -233,7 +260,7 @@ await load()
         <tbody>
           <tr v-if="!leads.length">
             <td colspan="6" class="px-4 py-8 text-center text-text-muted">
-              Nenhum lead cadastrado.
+              Nenhum lead encontrado.
             </td>
           </tr>
           <tr v-for="lead in leads" :key="lead.id" class="border-t border-border">
@@ -245,37 +272,121 @@ await load()
             </td>
             <td class="px-4 py-3 text-text-muted">{{ lead.email || '—' }}</td>
             <td class="px-4 py-3">{{ channelLabel[lead.channel] }}</td>
-            <td class="px-4 py-3">
-              <select
-                class="focus-ring rounded-[var(--radius-sm)] border border-border bg-surface px-2 py-1"
-                :value="lead.status"
-                @change="
-                  onStatusChange(
-                    lead,
-                    ($event.target as HTMLSelectElement).value as LeadStatus
-                  )
-                "
-              >
-                <option v-for="status in statuses" :key="status" :value="status">
-                  {{ statusLabel[status] }}
-                </option>
-              </select>
-            </td>
+            <td class="px-4 py-3">{{ statusLabel[lead.status] }}</td>
             <td class="px-4 py-3 tabular-nums text-text-muted">
               {{ formatDate(lead.createdAt) }}
             </td>
             <td class="px-4 py-3 text-right">
               <button
                 type="button"
-                class="text-sm font-semibold text-danger hover:underline"
-                @click="onDelete(lead)"
+                class="text-sm font-semibold text-brand-navy-900 hover:underline"
+                @click="openEdit(lead)"
               >
-                Excluir
+                Abrir
               </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <AdminModal
+      :open="modalOpen"
+      wide
+      :title="editing ? 'Detalhe do lead' : 'Novo lead'"
+      :description="
+        editing
+          ? 'Atualize status, observações e acompanhe a timeline.'
+          : 'Cadastre um lead manualmente.'
+      "
+      @close="closeModal"
+    >
+      <form class="grid gap-4 sm:grid-cols-2" @submit.prevent="onSave">
+        <label class="text-sm font-medium text-brand-navy-900 sm:col-span-2">
+          Nome
+          <input
+            v-model="form.fullName"
+            required
+            class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
+          />
+        </label>
+        <label class="text-sm font-medium text-brand-navy-900">
+          E-mail
+          <input
+            v-model="form.email"
+            type="email"
+            class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
+          />
+        </label>
+        <label class="text-sm font-medium text-brand-navy-900">
+          Telefone
+          <input
+            v-model="form.phone"
+            class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
+          />
+        </label>
+        <label class="text-sm font-medium text-brand-navy-900">
+          Canal
+          <select
+            v-model="form.channel"
+            class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
+          >
+            <option v-for="(label, value) in channelLabel" :key="value" :value="value">
+              {{ label }}
+            </option>
+          </select>
+        </label>
+        <label class="text-sm font-medium text-brand-navy-900">
+          Status
+          <select
+            v-model="form.status"
+            class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
+          >
+            <option v-for="(label, value) in statusLabel" :key="value" :value="value">
+              {{ label }}
+            </option>
+          </select>
+        </label>
+        <label class="text-sm font-medium text-brand-navy-900 sm:col-span-2">
+          Observações
+          <textarea
+            v-model="form.notes"
+            rows="3"
+            class="focus-ring mt-1.5 w-full rounded-[var(--radius-md)] border border-border px-3 py-2.5 font-normal"
+          />
+        </label>
+        <div class="flex flex-wrap gap-2 sm:col-span-2">
+          <button type="submit" class="btn-primary focus-ring" :disabled="saving">
+            {{ saving ? 'Salvando…' : editing ? 'Salvar alterações' : 'Criar lead' }}
+          </button>
+          <button
+            v-if="editing"
+            type="button"
+            class="rounded-[var(--radius-md)] border border-danger/30 px-4 py-2 text-sm font-semibold text-danger hover:bg-danger/5"
+            @click="onDelete(editing)"
+          >
+            Excluir
+          </button>
+        </div>
+      </form>
+
+      <section v-if="editing" class="mt-8 border-t border-border pt-5">
+        <h3 class="text-sm font-semibold text-brand-navy-900">Timeline</h3>
+        <p v-if="loadingActivities" class="mt-2 text-sm text-text-muted">Carregando…</p>
+        <ol v-else-if="activities.length" class="mt-3 space-y-3">
+          <li
+            v-for="item in activities"
+            :key="item.id"
+            class="rounded-[var(--radius-md)] border border-border bg-surface-muted px-3 py-2"
+          >
+            <p class="text-xs font-semibold uppercase tracking-wider text-text-muted">
+              {{ activityLabel[item.type] }} · {{ formatDate(item.createdAt) }}
+            </p>
+            <p class="mt-1 text-sm text-brand-navy-900">{{ item.message }}</p>
+          </li>
+        </ol>
+        <p v-else class="mt-2 text-sm text-text-muted">Sem atividades registradas.</p>
+      </section>
+    </AdminModal>
   </div>
 </template>

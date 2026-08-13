@@ -6,6 +6,7 @@ const links = [
   { to: '/admin', label: 'Visão geral', exact: true },
   { to: '/admin/leads', label: 'Leads' },
   { to: '/admin/equipe', label: 'Equipe' },
+  { to: '/admin/planos', label: 'Planos' },
   { to: '/admin/configuracoes', label: 'Configurações' }
 ]
 

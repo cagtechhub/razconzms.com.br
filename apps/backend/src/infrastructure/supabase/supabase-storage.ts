@@ -4,10 +4,17 @@ import path from 'node:path'
 
 let serviceClient: SupabaseClient | null = null
 
-const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+const ALLOWED_MIME = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/gif'
+])
 
 const EXT_BY_MIME: Record<string, string> = {
   'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
   'image/gif': 'gif'

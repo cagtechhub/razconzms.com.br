@@ -2,6 +2,7 @@ import {
   leadSchema,
   type CreateLeadInput,
   type Lead,
+  type ListLeadsQuery,
   type UpdateLeadInput
 } from '@razconms/shared'
 import type { LeadRepositoryPort } from '../../application/ports/lead-repository.port.js'
@@ -37,9 +38,29 @@ const mapLead = (record: LeadRecord): Lead =>
   })
 
 export const makePrismaLeadRepository = (prisma: PrismaClient): LeadRepositoryPort => ({
-  list: () =>
+  list: (query?: ListLeadsQuery) =>
     Effect.tryPromise({
-      try: () => prisma.lead.findMany({ orderBy: { createdAt: 'desc' } }),
+      try: () => {
+        const q = query?.q?.trim()
+        return prisma.lead.findMany({
+          where: {
+            ...(query?.status ? { status: query.status } : {}),
+            ...(query?.channel ? { channel: query.channel } : {}),
+            ...(q
+              ? {
+                  OR: [
+                    { fullName: { contains: q, mode: 'insensitive' } },
+                    { email: { contains: q, mode: 'insensitive' } },
+                    { phone: { contains: q, mode: 'insensitive' } },
+                    { notes: { contains: q, mode: 'insensitive' } }
+                  ]
+                }
+              : {})
+          },
+          orderBy: { createdAt: 'desc' },
+          ...(query?.limit ? { take: query.limit } : {})
+        })
+      },
       catch: (cause) => new InfraError('Failed to list leads', cause)
     }).pipe(Effect.map((rows) => rows.map(mapLead))),
 
