@@ -50,7 +50,8 @@ ENV NUXT_PUBLIC_SUPABASE_ANON_KEY=$NUXT_PUBLIC_SUPABASE_ANON_KEY
 
 # Nitro + yarn workspaces com Vue hoisted pode deixar `.output/server/node_modules/vue`
 # incompleto (sem `index.mjs`). Copiamos os pacotes reais da instalação raiz.
-# O trace do Nitro também pode deixar `unhead` sem `dist/server.mjs`.
+# O trace do Nitro também pode deixar `unhead` sem `dist/server.mjs` e sem `hookable`
+# (dependência hoisted: ERR_MODULE_NOT_FOUND em runtime).
 RUN yarn workspace @razconms/shared build \
   && yarn workspace @razconms/web build \
   && mkdir -p apps/web/.output/server/node_modules \
@@ -58,9 +59,15 @@ RUN yarn workspace @razconms/shared build \
             apps/web/.output/server/node_modules/@vue \
             apps/web/.output/server/node_modules/.nitro \
             apps/web/.output/server/node_modules/unhead \
+            apps/web/.output/server/node_modules/@unhead \
+            apps/web/.output/server/node_modules/hookable \
   && cp -a node_modules/vue apps/web/.output/server/node_modules/vue \
   && cp -a node_modules/@vue apps/web/.output/server/node_modules/@vue \
-  && cp -a node_modules/unhead apps/web/.output/server/node_modules/unhead
+  && cp -a node_modules/unhead apps/web/.output/server/node_modules/unhead \
+  && cp -a node_modules/@unhead apps/web/.output/server/node_modules/@unhead \
+  && cp -a node_modules/hookable apps/web/.output/server/node_modules/hookable \
+  && test -f apps/web/.output/server/node_modules/unhead/package.json \
+  && test -f apps/web/.output/server/node_modules/hookable/package.json
 
 # -----------------------------------------------------------------------------
 # Imagem final (apenas artefacto Nitro)

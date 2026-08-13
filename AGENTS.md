@@ -79,6 +79,7 @@ Produção na OS: `docker-compose.yml` + Traefik (rede `web`, nunca `host`) + Po
 - Browser/CSP: `NUXT_PUBLIC_API_BASE=https://api.…` (build args no Dockerfile da web)
 - Prisma: gerar client e copiar `output` para `dist` (wasm/runtime)
 - Vue: pin único via `resolutions` (Yarn 1)
+- Web Docker: copiar `vue`/`@vue`/`unhead`/`hookable` para `.output/server/node_modules` (Nitro + yarn hoisting)
 
 ## Entrega
 
